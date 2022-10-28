@@ -1,0 +1,23 @@
+<h1>What to Say...</h1>
+<p>Description: The ultimate website for the appropriate responses in any situation</p>
+<br>
+
+<form action="/new_post"  method="post">
+  <dl>
+    <dt>
+      <label for="todo">Enter a phrase for which you would like an appropriate response to</label><br><br>
+      <label for="stuff">Phrase
+        <input id="stuff" name="new_phrase" placeholder="" type="text" value=""><br>
+      </label>
+      <label for="stuff2">Possible response
+        <input id="stuff2" name="new_response" type="text" placeholder="Leave this empty if you are requesting a response only">
+      </label>
+  </dl>
+  <fieldset class="actions">
+    <input type="submit" value="Add">
+  </fieldset>
+</form>
+
+<% @posts.each_with_index do |post, index| %>
+  <p><%= post[:phrase] %></p>
+<% end %>
