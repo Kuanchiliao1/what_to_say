@@ -53,10 +53,12 @@ before do
   session[:posts] ||= []
   
   # dummy data to test
-  session[:posts] << {phrase: "test phrase", response: "sample response", comments: []}
-  session[:posts] << {phrase: "another test phrase", response: "sample response 2", comments: []}
-  session[:posts] << {phrase: "test phrase 560", response: "", comments: []}
-  session[:posts] << {phrase: "more testing phrases", response: "", comments: []}
+  if session[:posts] == []
+    session[:posts] << {phrase: "test phrase", response: "sample response", comments: []}
+    session[:posts] << {phrase: "another test phrase", response: "sample response 2", comments: []}
+    session[:posts] << {phrase: "test phrase 560", response: "", comments: []}
+    session[:posts] << {phrase: "more testing phrases", response: "", comments: []}
+  end
 
   @posts = session[:posts]
 end
@@ -68,14 +70,8 @@ helpers do
   end
 
   def display_search(query)
-    @posts.map do |phrase_hash|
-      binding.pry
-      if phrase_hash[:phrase]
-        phrase_hash[:phrase].map do |hash|
-
-        end
-      end
-      "<li>" + phrase_hash[:phrase] + "</li>"
+    @posts.filter_map do |phrase_hash|
+      "<li>" + phrase_hash[:phrase] + "</li>" if phrase_hash[:phrase].include?(query) || phrase_hash[:response].include?(query)
     end.join
   end
 end
@@ -94,7 +90,7 @@ post "/new_post" do
   redirect "/"
 end
 
-post "/search" do
+get "/search" do
   @query = params[:query]
-  redirect "/"
+  erb :homepage
 end

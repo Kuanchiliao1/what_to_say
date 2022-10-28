@@ -3,14 +3,13 @@
 <p>The ultimate website for the appropriate responses in any situation. Have you ever wondered what the appropriate response to a simple phrase like "how are you" should be? You've came to the right place! This is a site that enables you to find and or request responses to any particular phrase</p>
 <br>
 
-<form action="/search" method="post">
+<form action="/search" method="get">
   <h2>Enter a phrase for which you would like an appropriate response</h2>
   <input name="query"><br><br>
-<button>Search</button>
+  <button type="submit">Search</button>
 </form>
 
 <% if params[:query] %>
-<%= binding.pry %>
   <p>Search results:</p>
   <%=  display_search(@query) %>
 <% end %>
