@@ -51,6 +51,33 @@ end
 
 before do
   session[:posts] ||= []
+  
+  # dummy data to test
+  session[:posts] << {phrase: "test phrase", response: "sample response", comments: []}
+  session[:posts] << {phrase: "another test phrase", response: "sample response 2", comments: []}
+  session[:posts] << {phrase: "test phrase 560", response: "", comments: []}
+  session[:posts] << {phrase: "more testing phrases", response: "", comments: []}
+
+  @posts = session[:posts]
+end
+
+helpers do
+  # List out all the submitted phrases
+  def display_phrases
+    
+  end
+
+  def display_search(query)
+    @posts.map do |phrase_hash|
+      binding.pry
+      if phrase_hash[:phrase]
+        phrase_hash[:phrase].map do |hash|
+
+        end
+      end
+      "<li>" + phrase_hash[:phrase] + "</li>"
+    end.join
+  end
 end
 
 # Validate input post m
@@ -64,5 +91,10 @@ end
 post "/new_post" do
   phrase_name = params[:new_phrase]
   session[:posts] << {phrase: phrase_name, response: "", comments: []}
+  redirect "/"
+end
+
+post "/search" do
+  @query = params[:query]
   redirect "/"
 end
