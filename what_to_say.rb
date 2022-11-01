@@ -15,11 +15,11 @@ Basic features:
   - User chooses to Post a request, respond to a Post, or submit a new entry
     - Use three buttons
       - post requests using forms perhaps
-  - Displaying the posts/comments that have responses
+  - Displaying the phrases that have responses
     - Comments are nested in
 - How are comments related to users?
-  - Every comment has to have exactly one user
-  - Each user may have none or multiple comments
+  - Every phrase has to have exactly one user
+  - Each user may have none or multiple responses
   - This is our one-many relationship plain n simple
       CREATE TABLE users (
         id serial PRIMARY KEY,
@@ -27,7 +27,7 @@ Basic features:
         created_on date NOT NULL
       )
 
-      CREATE TABLE comments (
+      CREATE TABLE responses (
         id serial PRIMARY KEY,
         user_id text REFERENCES users(id) NOT NULL DELETE ON CASCADE,
         created_at timestamp NOT NULL DEFAULT now()
@@ -50,29 +50,53 @@ configure do
 end
 
 before do
-  session[:posts] ||= []
+  session[:entries] ||= []
   
   # dummy data to test
-  if session[:posts] == []
-    session[:posts] << {phrase: "test phrase", response: "sample response", comments: []}
-    session[:posts] << {phrase: "another test phrase", response: "sample response 2", comments: []}
-    session[:posts] << {phrase: "test phrase 560", response: "", comments: []}
-    session[:posts] << {phrase: "more testing phrases", response: "", comments: []}
+  if session[:entries] == []
+    session[:entries] << {phrase: "How are you?", context: "", response: "I'm doing well, and you?", comments: []}
+    session[:entries] << {phrase: "Hey! What do you think you're doing?", context: "A security guard is questioning you and you're a burgular", response: "Nothing! Just mindin my own business, and you sir?", comments: ["This is a terrible response!", "Not sure I like this one at all..."]}
+    session[:entries] << {phrase: "test phrase 560", context: "", response: "", comments: []}
+    session[:entries] << {phrase: "more testing phrases", context: "", response: "", comments: []}
   end
 
-  @posts = session[:posts]
+  @entries = session[:entries]
+
+  # For database addition
+  # @storage = DatabasePersistance.new(logger)
 end
 
 helpers do
-  # List out all the submitted phrases
-  def display_phrases
-    
+  # List out all the submitted entries
+  # Note: remember to use pagination
+  # Do not display comments here
+  def display_entries
+    @entries.map do |entry|
+      phrase = entry[:phrase]
+      response = entry[:response]
+
+      <<~TEXT
+        #{response}
+        #{phrase}
+      TEXT
+    end.join("\n\n")
   end
 
+  # Refactor this later
   def display_search(query)
-    @posts.filter_map do |phrase_hash|
-      "<li>" + phrase_hash[:phrase] + "</li>" if phrase_hash[:phrase].include?(query) || phrase_hash[:response].include?(query)
-    end.join
+    # 
+    filtered = @entries.filter_map do |phrase_hash|
+      phrase = phrase_hash[:phrase]
+      response = phrase_hash[:response]
+
+      next unless phrase.match?(/#{query}/i) || response.match?(/#{query}/i)
+      "<li>" + phrase + 
+        "<br>content: " + response +
+      "</li>" 
+    end.join("<br>")
+
+    # Have to refactor that to replace regardless of case
+    filtered.gsub(query, "<span style='color: red'>#{query}</span>")
   end
 end
 
@@ -80,13 +104,16 @@ end
 
 # Validate input phrase m
 get '/' do
-  @posts = session[:posts]
+  @entries = session[:entries]
   erb :homepage, layout: :layout
 end
 
-post "/new_post" do
+# Adding a partial entry
+
+# Adding a complete entry
+post "/add_entry" do
   phrase_name = params[:new_phrase]
-  session[:posts] << {phrase: phrase_name, response: "", comments: []}
+  session[:entries] << {phrase: phrase_name, response: "", comments: []}
   redirect "/"
 end
 

@@ -1,29 +1,45 @@
 <h1>What to Say...</h1>
-<h2>Description:</h2>
-<p>The ultimate website for the appropriate responses in any situation. Have you ever wondered what the appropriate response to a simple phrase like "how are you" should be? You've came to the right place! This is a site that enables you to find and or request responses to any particular phrase</p>
-<br>
+<%= display_entries %>
+<p>The ultimate website to find the appropriate responses in any situation. Have you ever wondered what the appropriate response to a simple phrase like "how are you" should be? You've came to the right place! This is a site that enables you to find and or request responses to any particular phrase</p>
 
+<a href="#">View all phrase/comment pairs</a>
+<hr style="width:100%", size="3", color=black>  
+
+<h2>Anatomy of an entry</h2>
+<p><strong>Phrase:</strong> This is the part that we want the response to</p>
+<p><strong>Optional Context:</strong>Context of the situation</p>
+<p><strong>Response:</strong> This is the response to the phrase in question</p>
+
+<hr style="width:100%", size="1", color=black>  
+<h3>Example:</h3>
+
+<p><strong>Phrase:</strong> How are you?</p>
+<p><strong>Optional Context:</strong> I'm a student saying this to a friend</p>
+<p><strong>Response:</strong> I'm doing well, and you?</p>
+
+<hr style="width:100%", size="3", color=black>  
 <form action="/search" method="get">
   <h2>Enter a phrase for which you would like an appropriate response</h2>
   <input name="query"><br><br>
   <button type="submit">Search</button>
 </form>
 
-<% if params[:query] %>
+<% unless display_search(@query) == "" %>
   <p>Search results:</p>
   <%=  display_search(@query) %>
 <% end %>
 <br><br>
+<hr style="width:100%", size="3", color=black>  
 
-<form action="/new_post"  method="post">
+<form action="/add_entry"  method="post">
   <dl>
     <dt>
-      <label for="todo">Enter a phrase for which you would like an appropriate response to</label><br><br>
-      <label for="stuff">Phrase
-        <input id="stuff" name="new_phrase" placeholder="" type="text" value=""><br>
+      <label for="todo">Submit your own phrase + response pair</label><br><br>
+      <label for="phrase">Phrase
+        <input id="phrase" name="new_phrase" placeholder="" type="text" value=""><br>
       </label>
-      <label for="stuff2">Possible response
-        <input id="stuff2" name="new_response" type="text" placeholder="Leave this empty if you are requesting a response only">
+      <label for="response">Possible Response
+        <input id="response" name="new_response" type="text" placeholder="Leave this empty if you are requesting a response only">
       </label>
   </dl>
   <fieldset class="actions">
