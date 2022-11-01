@@ -1,5 +1,9 @@
 <h1>What to Say...</h1>
+<a href='/entries'>all entries</a>
 <%= display_entries %>
+
+<p><%= session.delete(:failure) %></p><br>
+
 <p>The ultimate website to find the appropriate responses in any situation. Have you ever wondered what the appropriate response to a simple phrase like "how are you" should be? You've came to the right place! This is a site that enables you to find and or request responses to any particular phrase</p>
 
 <a href="#">View all phrase/comment pairs</a>
@@ -34,13 +38,16 @@
 <form action="/add_entry"  method="post">
   <dl>
     <dt>
-      <label for="todo">Submit your own phrase + response pair</label><br><br>
+      <label for="todo">Submit your own entry</label><br><br>
       <label for="phrase">Phrase
         <input id="phrase" name="new_phrase" placeholder="" type="text" value=""><br>
       </label>
-      <label for="response">Possible Response
+      <label for="response">Optional Context
+        <input id="response" name="new_context" type="text" placeholder="Leave this empty if you are requesting a response only">
+      </label><br>
+      <label for="response">Response
         <input id="response" name="new_response" type="text" placeholder="Leave this empty if you are requesting a response only">
-      </label>
+      </label><br>
   </dl>
   <fieldset class="actions">
     <input type="submit" value="Add">
