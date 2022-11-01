@@ -1,1 +1,47 @@
+<h1>What to Say...</h1>
+<a href='/entries'>all entries</a>
+<p><%= session.delete(:failure) %></p><br>
+<p><%= session.delete(:welcome) %></p><br>
 <%= display_entries %>
+
+
+<p>The ultimate website to find the appropriate responses in any situation. Have you ever wondered what the appropriate response to a simple phrase like "how are you" should be? You've came to the right place! This is a site that enables you to find and or request responses to any particular phrase</p>
+
+<a href="#">View all phrase/comment pairs</a>
+<hr style="width:100%", size="3", color=black>  
+
+<h2>Anatomy of an entry</h2>
+<p><strong>Phrase:</strong> This is the part that we want the response to</p>
+<p><strong>Optional Context:</strong>Context of the situation</p>
+<p><strong>Response:</strong> This is the response to the phrase in question</p>
+
+<hr style="width:100%", size="1", color=black>  
+<h3>Example:</h3>
+
+<p><strong>Phrase:</strong> How are you?</p>
+<p><strong>Optional Context:</strong> I'm a student saying this to a friend</p>
+<p><strong>Response:</strong> I'm doing well, and you?</p>
+
+<hr style="width:100%", size="3", color=black>  
+
+<form action="/add_entry"  method="post">
+  <dl>
+    <dt>
+      <label for="todo">Submit your own entry</label><br><br>
+      <label for="phrase">Phrase
+        <input id="phrase" name="new_phrase" placeholder="" type="text" value=""><br>
+      </label>
+      <label for="response">Optional Context
+        <input id="response" name="new_context" type="text" placeholder="Leave this empty if you are requesting a response only">
+      </label><br>
+      <label for="response">Response
+        <input id="response" name="new_response" type="text" placeholder="Leave this empty if you are requesting a response only">
+      </label><br>
+  </dl>
+  <fieldset class="actions">
+    <input type="submit" value="Add">
+  </fieldset>
+</form>
+
+
+
