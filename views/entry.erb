@@ -1,1 +1,28 @@
-<%= display_entry(params[:id]) %>
+<p>Phrase: <strong><%= @phrase %></strong></p>
+<p>Response: <strong><%= @entry_response %></strong></p>
+<a href='/entries/#{id}/edit'>Edit Entry</a>
+<p>Notes: </p>
+
+<ul>
+  <% @notes.each do |note| %>
+    <li><%= note %></li>
+    <a href='#'>Edit Note</a>
+  <% end %>
+</ul>
+
+<form action="/entries/<%= params[:id] %>/notes" method="post">
+  <dl>
+    <dt>
+      <label for="note">--------Add note
+      </label>
+    </dt>
+    <dd>
+      <input name="note" value="">
+    </dd>
+  </dl>
+  <fieldset>
+    <input type="submit" value="Add Note">
+  </fieldset>
+</form>
+
+<a href="/entries">home</a>

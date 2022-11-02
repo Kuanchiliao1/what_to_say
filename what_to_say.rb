@@ -49,9 +49,7 @@ Basic features:
         id serial PRIMARY KEY,
         user_id text REFERENCES users(id) NOT NULL DELETE ON CASCADE,
         created_at timestamp NOT NULL DEFAULT now(),
-        comments??,
-
-
+        comments??
       )
 - 
 - 
@@ -160,6 +158,11 @@ def valid?(input)
 end
 
 helpers do
+  # Count number of notes in an entry
+  def count_notes(entry_id)
+    @entries[entry_id][:notes].count
+  end
+
   # List out all the submitted entries
   # Note: remember to use pagination
   # Do not display comments here
@@ -172,7 +175,9 @@ helpers do
       <<~TEXT
         <p>Phrase: <strong>#{phrase}</strong></p>
         <p>Response: <strong>#{response}</strong></p>
+        <p>Notes: <strong>#{count_notes(index)}</strong></p>
         <a href="/entries/#{index}">Edit/View</a><br><br>
+        <hr style="width:100%", size="3", color=black>
       TEXT
     end.join
   end
@@ -185,22 +190,10 @@ helpers do
 
     "<p>Phrase: <strong>#{phrase}</strong></p>
     <p>Response: <strong>#{response}</strong></p>" +
-    "<a href='#'>Edit Entry</a>" + 
-    "<p>Notes: </p>" +
-    notes_for_entry(id)
+    "<a href='/entries/#{id}/edit'>Edit Entry</a>" + 
+    "<p>Notes: </p>"
   end
 
-  def notes_for_entry(id)
-    # notes array
-    notes = @entries[id.to_i][:notes]
-    
-    "<ul>" +
-    notes.map do |note|
-      "<li>#{note}</li>" +
-      "<a href='#'>Edit Note</a>"
-    end.join("<br><br>") +
-    "</ul>"
-  end
 
     # Use this to split entry array into groups of 5
     # def split_entries(entry)
@@ -267,7 +260,6 @@ post '/users/signin' do
     session[:failure] = "Invalid credentials!"
     erb :signin
   end
-    
 end
 
 # Validate input post
@@ -284,17 +276,42 @@ end
 
 # Edit an entry
 get '/entries/:id/edit' do |id|
+  @phrase = @entries[id.to_i][:phrase]
+  @entry_response = @entries[id.to_i][:response]
   erb :edit_entry
+end
+
+# Edit an entry
+post '/entries/:id/edit' do |id|
+  @entries[id.to_i][:phrase] = params[:phrase_name]
+  @entries[id.to_i][:response] = params[:response_name]
+
+  redirect "/entries/#{id}"
 end
 
 # View a specific entry
 get '/entries/:id' do |id|
+  @notes = @entries[id.to_i][:notes]
+  @phrase = @entries[id.to_i][:phrase]
+  @entry_response = @entries[id.to_i][:response]
   erb :entry
+end
+
+get '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
+  
 end
 
 # View all entries
 get '/entries' do
   erb :entries
+end
+
+# Adding a note
+post '/entries/:id/notes' do |id|
+  notes = @entries[id.to_i][:notes]
+  notes << params[:note]
+
+  redirect "/entries/#{id}"
 end
 
 # Adding a complete entry
@@ -310,8 +327,8 @@ post "/add_entry" do
   session[:entries] << {
     phrase: new_phrase,
     response: new_response,
-    comments: [],
-    votes: 0}
+    notes: []
+  }
   redirect "/"
 end
 
