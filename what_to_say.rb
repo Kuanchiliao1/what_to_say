@@ -85,75 +85,63 @@ before do
   if session[:entries] == []
     session[:entries] << {
       phrase: "How are you?", 
-      context: "", 
       response: "I'm doing well, and you?", 
-      comments: []}
+      notes: ["One of the most popular greetings in the United States", "People love it!"]}
     
     session[:entries] << {
       phrase: "Hey! What do you think you're doing?", 
-      context: "A security guard is questioning you and you're a burgular", 
       response: "Nothing! Just mindin my own business, and you sir?", 
-      comments: ["This is a terrible response!", "Not sure I like this one at all..."]}
+      notes: ["This is a terrible response!", "Not sure I like this one at all..."]}
     
     session[:entries] << {
       phrase: "test phrase 560", 
-      context: "", 
       response: "this is a super generic response for testing", 
-      comments: []}
+      notes: []}
     
     session[:entries] << {
       phrase: "more testing phrases", 
-      context: "", 
       response: "a response to a phrase", 
-      comments: []}
+      notes: []}
     
     session[:entries] << {
       phrase: "more testing phrases", 
-      context: "", 
       response: "asldkfjasd;klj", 
-      comments: []}
+      notes: []}
     
     session[:entries] << {
       phrase: "i funno anymore...", 
-      context: "", 
       response: "but you CAN know it!", 
-      comments: []}
+      notes: []}
 
       session[:entries] << {
         phrase: "How are you?", 
-        context: "", 
         response: "I'm doing well, and you?", 
-        comments: []}
+        notes: []}
       
       session[:entries] << {
         phrase: "Hey! What do you think you're doing?", 
-        context: "A security guard is questioning you and you're a burgular", 
         response: "Nothing! Just mindin my own business, and you sir?", 
-        comments: ["This is a terrible response!", "Not sure I like this one at all..."]}
+        notes: ["This is a terrible response!", "Not sure I like this one at all..."]}
       
       session[:entries] << {
         phrase: "test phrase 560", 
-        context: "", 
         response: "this is a super generic response for testing", 
-        comments: []}
+        notes: []}
       
       session[:entries] << {
         phrase: "more testing phrases", 
-        context: "", 
         response: "a response to a phrase", 
-        comments: []}
+        notes: []}
       
       session[:entries] << {
         phrase: "more testing phrases", 
-        context: "", 
         response: "asldkfjasd;klj", 
-        comments: []}
+        notes: []}
       
       session[:entries] << {
         phrase: "i funno anymore...", 
-        context: "", 
         response: "but you CAN know it!", 
-        comments: []}
+        notes: []}
   end
 
   @entries = session[:entries]
@@ -182,16 +170,47 @@ helpers do
       comments = entry[:comment]
 
       <<~TEXT
-        <a href="/entries/#{index}">#{index}</a>
         <p>Phrase: <strong>#{phrase}</strong></p>
         <p>Response: <strong>#{response}</strong></p>
-        <p>Comments: <strong>#{comments}</strong></p><br>
+        <a href="/entries/#{index}">Edit/View</a><br><br>
       TEXT
     end.join
   end
+
+  def display_entry(id)
+    entry = @entries[id.to_i]
+    
+    phrase = entry[:phrase]
+    response = entry[:response]
+
+    "<p>Phrase: <strong>#{phrase}</strong></p>
+    <p>Response: <strong>#{response}</strong></p>" +
+    "<a href='#'>Edit Entry</a>" + 
+    "<p>Notes: </p>" +
+    notes_for_entry(id)
+  end
+
+  def notes_for_entry(id)
+    # notes array
+    notes = @entries[id.to_i][:notes]
+    
+    "<ul>" +
+    notes.map do |note|
+      "<li>#{note}</li>" +
+      "<a href='#'>Edit Note</a>"
+    end.join("<br><br>") +
+    "</ul>"
+  end
+
     # Use this to split entry array into groups of 5
     # def split_entries(entry)
     # end
+end
+
+# Add note to an entry
+def add_note(entry_id, note)
+  notes = @entries[id.to_i][:notes]
+  notes << note
 end
 
 # Search feaature not required for the assignment
@@ -231,10 +250,6 @@ end
 # <% end %>
 # <br><br>
 
-
-
-
-
 # Sign up page
 get "/users/signin" do
   erb :signin
@@ -262,9 +277,24 @@ get '/' do
   redirect "/entries"
 end
 
+# Add entry page
+get '/entries/add' do
+  erb :add_entry
+end
+
+# Edit an entry
+get '/entries/:id/edit' do |id|
+  erb :edit_entry
+end
+
+# View a specific entry
+get '/entries/:id' do |id|
+  erb :entry
+end
+
 # View all entries
 get '/entries' do
-  erb :homepage
+  erb :entries
 end
 
 # Adding a complete entry
