@@ -1,12 +1,12 @@
 <p>Phrase: <strong><%= @phrase %></strong></p>
 <p>Response: <strong><%= @entry_response %></strong></p>
-<a href='/entries/#{id}/edit'>Edit Entry</a>
+<a href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
 <p>Notes: </p>
 
 <ul>
-  <% @notes.each do |note| %>
+  <% @notes.each_with_index do |note, index| %>
     <li><%= note %></li>
-    <a href='#'>Edit Note</a>
+    <a href='/entries/<%= params[:id] %>/notes/<%= index %>/edit'>Edit Note</a>
   <% end %>
 </ul>
 

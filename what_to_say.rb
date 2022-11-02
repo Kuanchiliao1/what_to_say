@@ -163,9 +163,8 @@ helpers do
     @entries[entry_id][:notes].count
   end
 
-  # List out all the submitted entries
-  # Note: remember to use pagination
-  # Do not display comments here
+  # List out all entries
+  #! Move this to to erb template
   def display_entries
     @entries.map.with_index do |entry, index|
       phrase = entry[:phrase]
@@ -182,18 +181,6 @@ helpers do
     end.join
   end
 
-  def display_entry(id)
-    entry = @entries[id.to_i]
-    
-    phrase = entry[:phrase]
-    response = entry[:response]
-
-    "<p>Phrase: <strong>#{phrase}</strong></p>
-    <p>Response: <strong>#{response}</strong></p>" +
-    "<a href='/entries/#{id}/edit'>Edit Entry</a>" + 
-    "<p>Notes: </p>"
-  end
-
 
     # Use this to split entry array into groups of 5
     # def split_entries(entry)
@@ -205,43 +192,6 @@ def add_note(entry_id, note)
   notes = @entries[id.to_i][:notes]
   notes << note
 end
-
-# Search feaature not required for the assignment
-#   # Refactor this later
-#   def display_search(query)
-#     # If redirected to "/" route, query would be nil
-#     # This will set it to an empty string instead
-#     query ||= ""
-    
-#     filtered = @entries.filter_map do |phrase_hash|
-#       phrase = phrase_hash[:phrase]
-#       context = phrase_hash[:context]
-#       response = phrase_hash[:response]
-
-#       next unless phrase.match?(/#{query}/i) || response.match?(/#{query}/i)
-
-#       "<ol>" + phrase + 
-#         # "<li>context: " + context + "</li>" +
-#         "<li>response: " + response + "</li>" +
-#       "</ol>" 
-#     end.join("<br>")
-#     # Have to refactor that to replace regardless of case
-#     filtered.gsub(query, "<span style='color: red'>#{query}</span>")
-#   end
-
-# # HTML for search
-# <hr style="width:100%", size="3", color=black>  
-# <form action="/search" method="get">
-#   <h2>Enter a phrase for which you would like an appropriate response</h2>
-#   <input name="query"><br><br>
-#   <button type="submit">Search</button>
-# </form>
-
-# <% unless display_search(@query) == "" %>
-#   <p>Search results:</p>
-#   <%=  display_search(@query) %>
-# <% end %>
-# <br><br>
 
 # Sign up page
 get "/users/signin" do
@@ -262,9 +212,7 @@ post '/users/signin' do
   end
 end
 
-# Validate input post
 
-# Validate input phrase m
 get '/' do
   redirect "/entries"
 end
@@ -281,24 +229,17 @@ get '/entries/:id/edit' do |id|
   erb :edit_entry
 end
 
-# Edit an entry
-post '/entries/:id/edit' do |id|
-  @entries[id.to_i][:phrase] = params[:phrase_name]
-  @entries[id.to_i][:response] = params[:response_name]
-
-  redirect "/entries/#{id}"
-end
-
 # View a specific entry
 get '/entries/:id' do |id|
   @notes = @entries[id.to_i][:notes]
   @phrase = @entries[id.to_i][:phrase]
   @entry_response = @entries[id.to_i][:response]
+
   erb :entry
 end
 
+# Edit notes of an entry
 get '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
-  
 end
 
 # View all entries
@@ -310,6 +251,14 @@ end
 post '/entries/:id/notes' do |id|
   notes = @entries[id.to_i][:notes]
   notes << params[:note]
+
+  redirect "/entries/#{id}"
+end
+
+# Edit an entry
+post '/entries/:id/edit' do |id|
+  @entries[id.to_i][:phrase] = params[:phrase_name]
+  @entries[id.to_i][:response] = params[:response_name]
 
   redirect "/entries/#{id}"
 end
@@ -330,9 +279,4 @@ post "/add_entry" do
     notes: []
   }
   redirect "/"
-end
-
-get "/search" do
-  @query = params[:query]
-  erb :homepage
 end
