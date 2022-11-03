@@ -163,31 +163,19 @@ helpers do
     @entries[entry_id][:notes].count
   end
 
-  # List out all entries
-  #! Move this to to erb template
-  def display_entries
-    @entries.map.with_index do |entry, index|
-      phrase = entry[:phrase]
-      response = entry[:response]
-      comments = entry[:comment]
-
-      <<~TEXT
-        <p>Phrase: <strong>#{phrase}</strong></p>
-        <p>Response: <strong>#{response}</strong></p>
-        <p>Notes: <strong>#{count_notes(index)}</strong></p>
-        <a href="/entries/#{index}">Edit/View</a><br><br>
-        <hr style="width:100%", size="3", color=black>
-      TEXT
-    end.join
-  end
-
   # This splits input array into nested arrays for pagination
   def split_array(entries_array)
-    entries_array.each_slice(4)
+    entries_array.each_slice(5).to_a
   end
 
-  def paginate(arrays)
-    arrays
+  # Count total entries
+  def total_entries
+    @entries.count
+  end
+
+  # Count number of pages
+  def page_count
+    (total_entries / 5) + 1
   end
 end
 
@@ -228,6 +216,8 @@ end
 
 # View all entries in a page
 get '/entries_page/:id' do |id|
+  @nested_array = split_array(@entries)
+  @page_id = params[:id].to_i
 
   erb :entries_page
 end

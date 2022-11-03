@@ -1,0 +1,14 @@
+<hr style="width:100%", size="3", color=black>
+
+<% @nested_array[@page_id].each.with_index do |entry, index| %>
+  <p>Phrase: <strong><%= entry[:phrase] %></strong></p>
+  <p>Response: <strong><%= entry[:response] %></strong></p>
+  <p>Notes: <strong><%= count_notes(index) %></strong></p>
+  
+  <a href="/entries/<%= index %>">Edit/View</a><br><br>
+  <hr style="width:100%", size="3", color=black>
+<% end %>
+
+<% page_count.times do |num|%>
+  <a href=<%= "/entries_page/#{num}" %>><%= num %></a>
+<% end %>
