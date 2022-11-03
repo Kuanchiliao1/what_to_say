@@ -1,0 +1,18 @@
+<h2>Editing a Note</h2>
+
+<form action="/entries/<%= params[:entry_id] %>/notes/<%= params[:note_id] %>/edit" method="post">
+  <dl>
+    <dt>
+      <label for="note">--------Edit note
+      </label>
+    </dt>
+    <dd>
+      <textarea name="note"><%= @note.strip %>
+        </textarea>
+    </dd>
+  </dl>
+  <fieldset>
+    <input type="submit" value="Save">
+    <a href="/entries/<%= params[:entry_id] %>">Cancel</a>
+  </fieldset>
+</form>

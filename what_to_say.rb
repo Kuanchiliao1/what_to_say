@@ -181,10 +181,14 @@ helpers do
     end.join
   end
 
+  # This splits input array into nested arrays for pagination
+  def split_array(entries_array)
+    entries_array.each_slice(4)
+  end
 
-    # Use this to split entry array into groups of 5
-    # def split_entries(entry)
-    # end
+  def paginate(arrays)
+    arrays
+  end
 end
 
 # Add note to an entry
@@ -217,12 +221,23 @@ get '/' do
   redirect "/entries"
 end
 
+# View all entries
+get '/entries' do
+  erb :entries
+end
+
+# View all entries in a page
+get '/entries_page/:id' do |id|
+
+  erb :entries_page
+end
+
 # Add entry page
 get '/entries/add' do
   erb :add_entry
 end
 
-# Edit an entry
+# Entry edit page
 get '/entries/:id/edit' do |id|
   @phrase = @entries[id.to_i][:phrase]
   @entry_response = @entries[id.to_i][:response]
@@ -238,16 +253,25 @@ get '/entries/:id' do |id|
   erb :entry
 end
 
-# Edit notes of an entry
+# Edit page for note of an entry
 get '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
+  @note = @entries[entry_id.to_i][:notes][note_id.to_i]
+  erb :edit_note
 end
 
-# View all entries
-get '/entries' do
-  erb :entries
+# Edit note of an entry
+post '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
+  @entries[entry_id.to_i][:notes][note_id.to_i] = params[:note]
+
+  erb :edit_note
 end
 
-# Adding a note
+# Delete note of an entry
+post '/entries/:entry_id/notes/:note_id/destroy' do |entry_id, note_id|
+
+end
+
+# Adding a note to an entry
 post '/entries/:id/notes' do |id|
   notes = @entries[id.to_i][:notes]
   notes << params[:note]
@@ -279,4 +303,10 @@ post "/add_entry" do
     notes: []
   }
   redirect "/"
+end
+
+# Delete an entry
+post '/entries/:id/destroy' do |id|
+
+  redirect '/entries'
 end

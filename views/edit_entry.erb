@@ -7,15 +7,13 @@
       </label>
     </dt>
     <dd>
-      <textarea name="phrase_name">
-        <%= @phrase %>
-      </textarea>
+      <textarea name="phrase_name"><%= @phrase.strip %>
+        </textarea>
     </dd>
     <label for="response_name">--------Edit response name
       </label>
     <dd>
-      <textarea name="response_name">
-        <%= @entry_response %>
+      <textarea name="response_name"><%= @entry_response.strip %>
       </textarea>
     </dd>
   </dl>
