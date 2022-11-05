@@ -1,11 +1,22 @@
+<%= session.delete(:valid) %>
+<%= session.delete(:success) %><br>
+
+
+<a href='/entries/add'>Add Entry</a>
 <hr style="width:100%", size="3", color=black>
 
 <% @nested_array[@page_id].each.with_index do |entry, index| %>
   <p>Phrase: <strong><%= entry[:phrase] %></strong></p>
   <p>Response: <strong><%= entry[:response] %></strong></p>
-  <p>Notes: <strong><%= count_notes(index) %></strong></p>
+  <p>Note Count: <strong><%= count_notes(index) %></strong></p>
   
-  <a href="/entries/<%= index %>">Edit/View</a><br><br>
+  <a href="/entries/<%= index %>">Edit/View</a><br>
+
+  <form action="/entries/<%= index %>/destroy" method="post">
+    <button type="submit"">Delete Entry</button>
+  </form>
+
+  <br>
   <hr style="width:100%", size="3", color=black>
 <% end %>
 

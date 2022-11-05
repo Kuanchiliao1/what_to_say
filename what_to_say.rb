@@ -148,13 +148,19 @@ before do
   # @storage = DatabasePersistance.new(logger)
 end
 
-# Input validation
-def valid?(input)
-  # Take out the spaces in the back and in the front
-  input = input.strip
-
-  # If input is not equal to empty string, then return true
-  input != ""
+# Sets the session to the correct state (put in the stripped input!)
+# input_type = "Phrase" || "Response"
+def input_session_message(input, input_type)
+  session[:failure] ||= []
+  session[:valid] ||= []
+  
+  if !(1..100).cover? input.size
+    session[:failure] << "#{input_type} must be between 1-100 characters."
+  elsif @entries.any? { |e| e[:phrase] == input} || input_type == "Phrase"
+    session[:failure] << "#{input_type} must be unique."
+  else
+    session[:valid] << "The #{input_type} is valid."
+  end
 end
 
 helpers do
@@ -197,6 +203,7 @@ post '/users/signin' do
 
   if @user == "admin" && pass == "password"
     session[:welcome] = "Welcome!"
+    session[:username] = @user
     redirect "/"
   else
     session[:failure] = "Invalid credentials!"
@@ -204,15 +211,22 @@ post '/users/signin' do
   end
 end
 
+# User sign out
+post '/users/signout' do
+  session.delete(:username)
+  session[:success] = "You are signed out now."
+  redirect "/"
+end
+
 
 get '/' do
-  redirect "/entries"
+  redirect "/entries_page/0"
 end
 
-# View all entries
-get '/entries' do
-  erb :entries
-end
+# # View all entries
+# get '/entries' do
+#   erb :entries
+# end
 
 # View all entries in a page
 get '/entries_page/:id' do |id|
@@ -251,20 +265,28 @@ end
 
 # Edit note of an entry
 post '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
-  @entries[entry_id.to_i][:notes][note_id.to_i] = params[:note]
+  note = params[:note]
+  @entries[entry_id.to_i][:notes][note_id.to_i] = note
 
-  erb :edit_note
+  input_session_message(note, "Note")
+
+  redirect "/entries/#{entry_id}"
 end
 
 # Delete note of an entry
 post '/entries/:entry_id/notes/:note_id/destroy' do |entry_id, note_id|
+  @entries[entry_id.to_i][:notes].delete_at(note_id.to_i)
+  session[:success] = "The note has been deleted!"
 
+  redirect "/entries/#{entry_id}"
 end
 
-# Adding a note to an entry
+# Add note to an entry
 post '/entries/:id/notes' do |id|
   notes = @entries[id.to_i][:notes]
   notes << params[:note]
+
+  input_session_message(params[:note], "Note")
 
   redirect "/entries/#{id}"
 end
@@ -279,24 +301,27 @@ end
 
 # Adding a complete entry
 post "/add_entry" do
-  new_phrase = params[:new_phrase]
-  new_context = params[:new_context]
-  new_response = params[:new_response]
+  new_phrase = params[:new_phrase].strip
+  new_response = params[:new_response].strip
 
-  if !valid?(new_phrase)
-    session[:failure] = "ur stuff is invalidated!"
-  end
+  input_session_message(new_phrase, "Phrase")
+  input_session_message(new_response, "Response")
+  # Idea: 
+    # Tell user that phrase was valid, and response was invalid and vice verse
+    # If both are correct, then give a valid output instead
 
   session[:entries] << {
     phrase: new_phrase,
     response: new_response,
     notes: []
   }
-  redirect "/"
+  redirect "/entries_page/0"
 end
 
 # Delete an entry
 post '/entries/:id/destroy' do |id|
+  @entries.delete_at(id.to_i)
+  session[:success] = "The entry has been successfully deleted"
 
-  redirect '/entries'
+  redirect '/'
 end
