@@ -163,6 +163,16 @@ def input_session_message(input, input_type)
   end
 end
 
+# Predicate for whether user is signed in
+def signed_in?
+  session[:username]
+end
+
+# Redirect if user is not signed in
+def redirect_if_logged_out
+  redirect '/users/signin' unless signed_in?
+end
+
 helpers do
   # Count number of notes in an entry
   def count_notes(entry_id)
@@ -191,8 +201,11 @@ def add_note(entry_id, note)
   notes << note
 end
 
-# Sign up page
+# Sign in page
 get "/users/signin" do
+  if session[:username]
+    redirect '/'
+  end
   erb :signin
 end
 
@@ -218,7 +231,7 @@ post '/users/signout' do
   redirect "/"
 end
 
-
+# I think this is sending us into an infinite loop
 get '/' do
   redirect "/entries_page/0"
 end
@@ -230,6 +243,8 @@ end
 
 # View all entries in a page
 get '/entries_page/:id' do |id|
+  redirect_if_logged_out
+
   @nested_array = split_array(@entries)
   @page_id = params[:id].to_i
 

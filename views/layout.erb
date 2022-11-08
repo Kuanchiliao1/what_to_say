@@ -1,3 +1,15 @@
 <h1>What to Say...</h1>
+<% if session[:username]%>
+  <p>You are signed in as <%= session[:username] %></p>
+  <form action="/users/signout" method="post">
+    <button type="submit">Sign out</button>
+  </form>
+<% else %>
+  <p>You are not signed in</p>
+  <a href="/users/signin">Signin</a>
+<% end %>
+
+
+
 
 <%= yield %>
