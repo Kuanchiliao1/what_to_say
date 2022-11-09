@@ -1,58 +1,8 @@
 
 
 =begin
-Basic features:
-!- Users can input new words and definitions
-  !- This input will be displayed to all
-  - User may delete any post
-  - User is mainly used to identify oneself as the poster
+- Get everything into a sessionpersistance thing
   - 
-
-- Login authentication for all users
-  - Ig store this as a yaml file?
-  - Or in database
-  *- Look up how to store this in PSQL
-  *- Can look at the CFM project for this
-
-- Transition session logic
-  - build out the basics
-  - change to session persistance
-  - change to db persistance
-  - look at todoist project for all of this
-
-- Homepage
-  - Welcome stuff
-  - Set number of posts displayed
-    - Pagination
-      - Use a method to split things up into multiple equal sized arrays
-    - Sort
-      - Look at how todolist was sorted
-
-  - User chooses to Post a request, respond to a Post, or submit a new entry
-    - Use three buttons
-      - post requests using forms perhaps
-  - Displaying the phrases that have responses
-    - Comments are nested in
-
-- How are comments related to users?
-  - Every phrase has to have exactly one user
-  - Each user may have none or multiple responses
-  - This is our one-many relationship plain n simple
-
-      CREATE TABLE users (
-        id serial PRIMARY KEY,
-        username text NOT NULL,
-        created_on date NOT NULL
-      )
-
-      CREATE TABLE entries (
-        id serial PRIMARY KEY,
-        user_id text REFERENCES users(id) NOT NULL DELETE ON CASCADE,
-        created_at timestamp NOT NULL DEFAULT now(),
-        comments??
-      )
-- 
-- 
 =end
 
 require "sinatra"
@@ -66,7 +16,7 @@ require "pry"
 configure do
   enable :sessions
   set :session_secret, '\x12\x9A\x81*U\xCFT\x91\xB7;\xAF\xF2I]\x9C@L\xD5\xB8;\x00\x87\xF3\x82yS(r\x90\xC8\x86\xBB\x13\x92\xA83$O'
-  # set :erb, escape_html: true
+  set :erb, escape_html: true
 end
 
 # Move the config settings for development into one location
@@ -76,6 +26,7 @@ configure(:development) do
 end
 
 before do
+  @storage = SessionPersistance.new(session)
   session[:entries] ||= []
   @entries = session[:entries]
   
@@ -141,25 +92,19 @@ before do
         response: "but you CAN know it!", 
         notes: []}
   end
-
-  @entries = session[:entries]
-
-  # For database addition
-  # @storage = DatabasePersistance.new(logger)
 end
 
 # Sets the session to the correct state (put in the stripped input!)
 # input_type = "Phrase" || "Response"
 def input_session_message(input, input_type)
   session[:failure] ||= []
-  session[:success] ||= []
   
   if !(1..100).cover? input.size
     session[:failure] << "#{input_type} must be between 1-100 characters."
   elsif @entries.any? { |e| e[:phrase] == input} && input_type == "Phrase"
     session[:failure] << "#{input_type} must be unique."
   else
-    session[:success] << "The #{input_type} was entered successfully."
+    session[:success] = "The #{input_type} was entered successfully."
   end
 end
 
@@ -178,10 +123,21 @@ def redirect_if_logged_out
   end
 end
 
+class SessionPersistance
+  def initialize(session)
+    @session = session
+    @session[:entries] ||= []
+  end
+
+  def all_entries
+    @session[:entries]
+  end
+end
+
 helpers do
   # Count number of notes in an entry
   def count_notes(entry_id)
-    @entries[entry_id][:notes].count
+    @storage.all_entries[entry_id][:notes].count
   end
 
   # This splits input array into nested arrays for pagination

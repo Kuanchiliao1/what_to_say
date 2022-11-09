@@ -7,11 +7,12 @@
 <hr style="width:100%", size="3", color=black>
 
 <% @nested_array[@page_id].each.with_index do |entry, index| %>
+  <% entry_index = index + (@page_id * 5) %>
   <p>Phrase: <strong><%= entry[:phrase] %></strong></p>
   <p>Response: <strong><%= entry[:response] %></strong></p>
-  <p>Note Count: <strong><%= count_notes(index) %></strong></p>
+  <p>Note Count: <strong><%= count_notes(entry_index) %></strong></p>
   
-  <a href="/entries/<%= index + (@page_id * 5) %>">Edit/View</a><br>
+  <a href="/entries/<%= entry_index %>">Edit/View</a><br>
 
   <form action="/entries/<%= index %>/destroy" method="post">
     <button type="submit"">Delete Entry</button>
