@@ -1,6 +1,6 @@
 <h1>What to Say...</h1>
 <% if session[:username]%>
-  <p>You are signed in as <%= session[:username] %></p>
+  <p>You are signed in as <strong><%= session[:username] %></strong></p>
   <form action="/users/signout" method="post">
     <button type="submit">Sign out</button>
   </form>

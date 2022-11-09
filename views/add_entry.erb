@@ -1,15 +1,25 @@
+<% if session[:failure] %>
+  <% session[:failure].each do |el|%>
+    <p style="font-size:14px; color:red; font-weight:bold; font-style:italic;"><%= el %></p>
+  <% end %>
+  <% session.delete(:failure) %>
+<% end %>
+
+
 <form action="/add_entry"  method="post">
   <dl>
     <dt>
-      <label for="todo">Submit your own entry</label><br><br>
+      <label for="todo">Submit your own entry (Note: phrase MUST be unique)</label><br><br>
       <label for="phrase">Phrase
-        <input id="phrase" name="new_phrase" placeholder="" type="text" value=""><br>
+        <input id="phrase" name="new_phrase" placeholder="" type="text" value="<%= params[:new_phrase] %>"><br>
       </label><br>
       <label for="response">Response
-        <input id="response" name="new_response" type="text"
+        <input id="response" name="new_response" type="text" value="<%= params[:new_response] %>"
       </label><br>
   </dl>
   <fieldset class="actions">
     <input type="submit" value="Add">
   </fieldset>
 </form>
+
+<a href="/entries_page/0">home</a>

@@ -152,14 +152,14 @@ end
 # input_type = "Phrase" || "Response"
 def input_session_message(input, input_type)
   session[:failure] ||= []
-  session[:valid] ||= []
+  session[:success] ||= []
   
   if !(1..100).cover? input.size
     session[:failure] << "#{input_type} must be between 1-100 characters."
-  elsif @entries.any? { |e| e[:phrase] == input} || input_type == "Phrase"
+  elsif @entries.any? { |e| e[:phrase] == input} && input_type == "Phrase"
     session[:failure] << "#{input_type} must be unique."
   else
-    session[:valid] << "The #{input_type} is valid."
+    session[:success] << "The #{input_type} was entered successfully."
   end
 end
 
@@ -170,7 +170,12 @@ end
 
 # Redirect if user is not signed in
 def redirect_if_logged_out
-  redirect '/users/signin' unless signed_in?
+  if signed_in?
+    "nothing"
+  else
+    session[:target_path] = @env["REQUEST_PATH"]
+    redirect '/users/signin'
+  end
 end
 
 helpers do
@@ -191,7 +196,7 @@ helpers do
 
   # Count number of pages
   def page_count
-    (total_entries / 5) + 1
+    total_entries % 5 == 0 ? (total_entries / 5) : (total_entries / 5) + 1
   end
 end
 
@@ -206,6 +211,7 @@ get "/users/signin" do
   if session[:username]
     redirect '/'
   end
+  
   erb :signin
 end
 
@@ -217,7 +223,7 @@ post '/users/signin' do
   if @user == "admin" && pass == "password"
     session[:welcome] = "Welcome!"
     session[:username] = @user
-    redirect "/"
+    redirect session[:target_path]
   else
     session[:failure] = "Invalid credentials!"
     erb :signin
@@ -233,6 +239,7 @@ end
 
 # I think this is sending us into an infinite loop
 get '/' do
+  redirect_if_logged_out
   redirect "/entries_page/0"
 end
 
@@ -253,11 +260,13 @@ end
 
 # Add entry page
 get '/entries/add' do
+  redirect_if_logged_out
   erb :add_entry
 end
 
 # Entry edit page
 get '/entries/:id/edit' do |id|
+  redirect_if_logged_out
   @phrase = @entries[id.to_i][:phrase]
   @entry_response = @entries[id.to_i][:response]
   erb :edit_entry
@@ -265,6 +274,7 @@ end
 
 # View a specific entry
 get '/entries/:id' do |id|
+  redirect_if_logged_out
   @notes = @entries[id.to_i][:notes]
   @phrase = @entries[id.to_i][:phrase]
   @entry_response = @entries[id.to_i][:response]
@@ -274,12 +284,14 @@ end
 
 # Edit page for note of an entry
 get '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
+  redirect_if_logged_out
   @note = @entries[entry_id.to_i][:notes][note_id.to_i]
   erb :edit_note
 end
 
 # Edit note of an entry
 post '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
+  redirect_if_logged_out
   note = params[:note]
   @entries[entry_id.to_i][:notes][note_id.to_i] = note
 
@@ -290,6 +302,7 @@ end
 
 # Delete note of an entry
 post '/entries/:entry_id/notes/:note_id/destroy' do |entry_id, note_id|
+  redirect_if_logged_out
   @entries[entry_id.to_i][:notes].delete_at(note_id.to_i)
   session[:success] = "The note has been deleted!"
 
@@ -298,6 +311,7 @@ end
 
 # Add note to an entry
 post '/entries/:id/notes' do |id|
+  redirect_if_logged_out
   notes = @entries[id.to_i][:notes]
   notes << params[:note]
 
@@ -308,6 +322,7 @@ end
 
 # Edit an entry
 post '/entries/:id/edit' do |id|
+  redirect_if_logged_out
   @entries[id.to_i][:phrase] = params[:phrase_name]
   @entries[id.to_i][:response] = params[:response_name]
 
@@ -316,11 +331,16 @@ end
 
 # Adding a complete entry
 post "/add_entry" do
+  redirect_if_logged_out
   new_phrase = params[:new_phrase].strip
   new_response = params[:new_response].strip
 
   input_session_message(new_phrase, "Phrase")
   input_session_message(new_response, "Response")
+
+  unless session[:failure].empty?
+    return erb :add_entry
+  end
   # Idea: 
     # Tell user that phrase was valid, and response was invalid and vice verse
     # If both are correct, then give a valid output instead
@@ -335,6 +355,7 @@ end
 
 # Delete an entry
 post '/entries/:id/destroy' do |id|
+  redirect_if_logged_out
   @entries.delete_at(id.to_i)
   session[:success] = "The entry has been successfully deleted"
 

@@ -1,8 +1,9 @@
-<%= session.delete(:valid) %>
-<%= session.delete(:success) %><br>
+<% session.delete(:success) %>
+
 
 
 <a href='/entries/add'>Add Entry</a>
+<h2>Your Entries:</h2>
 <hr style="width:100%", size="3", color=black>
 
 <% @nested_array[@page_id].each.with_index do |entry, index| %>
@@ -10,7 +11,7 @@
   <p>Response: <strong><%= entry[:response] %></strong></p>
   <p>Note Count: <strong><%= count_notes(index) %></strong></p>
   
-  <a href="/entries/<%= index %>">Edit/View</a><br>
+  <a href="/entries/<%= index + (@page_id * 5) %>">Edit/View</a><br>
 
   <form action="/entries/<%= index %>/destroy" method="post">
     <button type="submit"">Delete Entry</button>
@@ -20,6 +21,6 @@
   <hr style="width:100%", size="3", color=black>
 <% end %>
 
-<% page_count.times do |num|%>
+<% (page_count).times do |num|%>
   <a href=<%= "/entries_page/#{num}" %>><%= num %></a>
 <% end %>
