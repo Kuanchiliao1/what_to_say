@@ -13,3 +13,13 @@ body {
   justify-content: space-between;
   border: pink solid;
 }
+
+.notecard-container {
+  display: flex;
+  border: pink solid;
+  flex-direction: column;
+}
+
+.notecard {
+  border: pink solid;
+}

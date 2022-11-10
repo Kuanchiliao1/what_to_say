@@ -56,3 +56,70 @@ Keep in mind that your grader may be unfamiliar with the problem domain. If you 
   @query = params[:query]
   erb :homepage
 end -->
+
+
+
+
+
+
+if session[:entries] == []
+    session[:entries] << {
+      phrase: "How are you?", 
+      response: "I'm doing well, and you?", 
+      notes: ["One of the most popular greetings in the United States", "People love it!"]}
+    
+    session[:entries] << {
+      phrase: "Hey! What do you think you're doing?", 
+      response: "Nothing! Just mindin my own business, and you sir?", 
+      notes: ["This is a terrible response!", "Not sure I like this one at all..."]}
+    
+    session[:entries] << {
+      phrase: "test phrase 560", 
+      response: "this is a super generic response for testing", 
+      notes: []}
+    
+    session[:entries] << {
+      phrase: "more testing phrases", 
+      response: "a response to a phrase", 
+      notes: []}
+    
+    session[:entries] << {
+      phrase: "more testing phrases", 
+      response: "asldkfjasd;klj", 
+      notes: []}
+    
+    session[:entries] << {
+      phrase: "i funno anymore...", 
+      response: "but you CAN know it!", 
+      notes: []}
+
+      session[:entries] << {
+        phrase: "How are you?", 
+        response: "I'm doing well, and you?", 
+        notes: []}
+      
+      session[:entries] << {
+        phrase: "Hey! What do you think you're doing?", 
+        response: "Nothing! Just mindin my own business, and you sir?", 
+        notes: ["This is a terrible response!", "Not sure I like this one at all..."]}
+      
+      session[:entries] << {
+        phrase: "test phrase 560", 
+        response: "this is a super generic response for testing", 
+        notes: []}
+      
+      session[:entries] << {
+        phrase: "more testing phrases", 
+        response: "a response to a phrase", 
+        notes: []}
+      
+      session[:entries] << {
+        phrase: "more testing phrases", 
+        response: "asldkfjasd;klj", 
+        notes: []}
+      
+      session[:entries] << {
+        phrase: "i funno anymore...", 
+        response: "but you CAN know it!", 
+        notes: []}
+  end

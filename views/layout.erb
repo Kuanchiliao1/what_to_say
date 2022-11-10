@@ -21,11 +21,11 @@
   </div>
 </div>
 
-<p style="font-size:14px; color:#538b01; font-weight:bold; font-style:italic;"><%= session.delete(:success) %></p>
+<p style="font-size:20px; color:#538b01; font-weight:bold; font-style:italic;"><%= session.delete(:success) %></p>
 
 <% if session[:failure] %>
   <% session[:failure].each do |el|%>
-    <p style="font-size:14px; color:red; font-weight:bold; font-style:italic;"><%= el %></p>
+    <p style="font-size:20px; color:red; font-weight:bold; font-style:italic;"><%= el %></p>
   <% end %>
   <% session.delete(:failure) %>
 <% end %>

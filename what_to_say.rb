@@ -28,69 +28,6 @@ end
 before do
   @storage = SessionPersistance.new(session)
   session[:failure] ||= []
-  
-  # dummy data to test
-  if session[:entries] == []
-    session[:entries] << {
-      phrase: "How are you?", 
-      response: "I'm doing well, and you?", 
-      notes: ["One of the most popular greetings in the United States", "People love it!"]}
-    
-    session[:entries] << {
-      phrase: "Hey! What do you think you're doing?", 
-      response: "Nothing! Just mindin my own business, and you sir?", 
-      notes: ["This is a terrible response!", "Not sure I like this one at all..."]}
-    
-    session[:entries] << {
-      phrase: "test phrase 560", 
-      response: "this is a super generic response for testing", 
-      notes: []}
-    
-    session[:entries] << {
-      phrase: "more testing phrases", 
-      response: "a response to a phrase", 
-      notes: []}
-    
-    session[:entries] << {
-      phrase: "more testing phrases", 
-      response: "asldkfjasd;klj", 
-      notes: []}
-    
-    session[:entries] << {
-      phrase: "i funno anymore...", 
-      response: "but you CAN know it!", 
-      notes: []}
-
-      session[:entries] << {
-        phrase: "How are you?", 
-        response: "I'm doing well, and you?", 
-        notes: []}
-      
-      session[:entries] << {
-        phrase: "Hey! What do you think you're doing?", 
-        response: "Nothing! Just mindin my own business, and you sir?", 
-        notes: ["This is a terrible response!", "Not sure I like this one at all..."]}
-      
-      session[:entries] << {
-        phrase: "test phrase 560", 
-        response: "this is a super generic response for testing", 
-        notes: []}
-      
-      session[:entries] << {
-        phrase: "more testing phrases", 
-        response: "a response to a phrase", 
-        notes: []}
-      
-      session[:entries] << {
-        phrase: "more testing phrases", 
-        response: "asldkfjasd;klj", 
-        notes: []}
-      
-      session[:entries] << {
-        phrase: "i funno anymore...", 
-        response: "but you CAN know it!", 
-        notes: []}
-  end
 end
 
 # Sets the session to the correct state (put in the stripped input!)
@@ -103,6 +40,8 @@ def add_flash_message_to_session(input, input_type, input_action="entered")
   else
     session[:success] = "The #{input_type} was #{input_action} successfully."
   end
+
+  session.delete(:success) unless session[:failure].empty?
 end
 
 # Predicate for whether user is signed in
@@ -138,6 +77,31 @@ class SessionPersistance
     all_entries[entry_id][:notes]
   end
 
+  def add_entry(phrase, response)
+    all_entries << {
+      phrase: phrase,
+      response: response,
+      notes: []
+    }
+  end
+
+  def note(entry_id, note_id)
+    all_notes(entry_id)[note_id]
+  end
+
+  # Add note to an entry
+  def add_note(entry_id, note)
+    all_notes(entry_id) << note
+  end
+
+  def edit_note(entry_id, note_id, note)
+    all_entries[entry_id][:notes][note_id] = note
+  end
+
+  def delete_note(entry_id, note_id)
+    all_entries[entry_id][:notes].delete_at(note_id)
+  end
+
   def phrase(entry_id)
     all_entries[entry_id][:phrase]
   end
@@ -152,10 +116,6 @@ class SessionPersistance
 
   def set_response(entry_id, response)
     all_entries[entry_id][:response] = response
-  end
-
-  def note(entry_id, note_id)
-    all_notes(entry_id)[note_id]
   end
 end
 
@@ -179,12 +139,14 @@ helpers do
   def total_entries
     @storage.all_entries.count
   end
+
+  # Give current page based on the entry id
+  def current_page(entry_id)
+    ###
+  end
 end
 
-# Add note to an entry
-def add_note(entry_id, note)
-  @storage.all_notes << note
-end
+
 
 # Sign in page
 get "/users/signin" do
@@ -198,7 +160,6 @@ end
 # I think this is sending us into an infinite loop
 get '/' do
   redirect_if_logged_out
-
   redirect "/entries_page/0"
 end
 
@@ -233,8 +194,8 @@ end
 # View a specific entry
 get '/entries/:id' do |id|
   redirect_if_logged_out
-
   id = id.to_i
+
   @notes = @storage.all_notes(id)
   @phrase = @storage.phrase(id)
   # Note: @response is reserved and doesn't work
@@ -246,7 +207,6 @@ end
 # Edit page for note of an entry
 get '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
   redirect_if_logged_out
-  # @note = @storage.all_entries[entry_id.to_i][:notes][note_id.to_i]
   @note = @storage.note(entry_id.to_i, note_id.to_i)
   erb :edit_note
 end
@@ -254,8 +214,11 @@ end
 # Edit note of an entry
 post '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
   redirect_if_logged_out
+  @note_id = note_id.to_i
+  entry_id = entry_id.to_i
+
   note = params[:note].strip
-  @storage.all_entries[entry_id.to_i][:notes][note_id.to_i] = note
+  @storage.edit_note(entry_id, @note_id, note)
 
   if add_flash_message_to_session(note, "Note", "edited").class == Array
     erb :edit_note
@@ -267,7 +230,8 @@ end
 # Delete note of an entry
 post '/entries/:entry_id/notes/:note_id/destroy' do |entry_id, note_id|
   redirect_if_logged_out
-  @storage.all_entries[entry_id.to_i][:notes].delete_at(note_id.to_i)
+
+  @storage.delete_note(entry_id.to_i, note_id.to_i)
   session[:success] = "The Note has been deleted!"
 
   redirect "/entries/#{entry_id}"
@@ -276,10 +240,14 @@ end
 # Add note to an entry
 post '/entries/:id/notes' do |id|
   redirect_if_logged_out
-  notes = @storage.all_entries[id.to_i][:notes]
-  notes << params[:note]
 
-  add_flash_message_to_session(params[:note], "Note")
+  @notes = @storage.all_notes(id.to_i)
+  note = params[:note].strip
+
+  add_flash_message_to_session(note, "Note")
+  return erb :entry unless session[:failure].empty?
+  
+  @storage.add_note(id.to_i, note)
 
   redirect "/entries/#{id}"
 end
@@ -304,17 +272,11 @@ post "/add_entry" do
   add_flash_message_to_session(new_phrase, "Phrase")
   add_flash_message_to_session(new_response, "Response")
 
-  unless session[:failure].empty?
-    return erb :add_entry
-  end
+  return erb :entry unless session[:failure].empty?
 
-  session[:success] = "Entry entered successfully"
-  @storage.all_entries << {
-    phrase: new_phrase,
-    response: new_response,
-    notes: []
-  }
-  
+  session[:success] = "The Entry has been successfully entered."
+  @storage.add_entry(new_phrase, new_response)
+
   redirect "/entries_page/0"
 end
 
@@ -322,7 +284,7 @@ end
 post '/entries/:id/destroy' do |id|
   redirect_if_logged_out
   @storage.all_entries.delete_at(id.to_i)
-  session[:success] = "The entry has been successfully deleted"
+  session[:success] = "The Entry has been successfully deleted"
 
   redirect '/'
 end
