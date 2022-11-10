@@ -12,6 +12,7 @@ require "tilt/erubis"
 # This allows use to "store" html blocks access within views via yield keyword
 require "sinatra/content_for"
 require "pry"
+require_relative "database_persistance.rb"
 
 configure do
   enable :sessions
@@ -26,7 +27,7 @@ configure(:development) do
 end
 
 before do
-  @storage = SessionPersistance.new(session)
+  @storage = DatabasePersistance.new
   session[:failure] ||= []
 end
 
@@ -59,66 +60,6 @@ def redirect_if_logged_out
   end
 end
 
-class SessionPersistance
-  def initialize(session)
-    @session = session
-    @session[:entries] ||= []
-  end
-
-  def all_entries
-    @session[:entries]
-  end
-
-  def find_entry(entry_id)
-    @storage.all_entries[entry_id]
-  end
-
-  def all_notes(entry_id)
-    all_entries[entry_id][:notes]
-  end
-
-  def add_entry(phrase, response)
-    all_entries << {
-      phrase: phrase,
-      response: response,
-      notes: []
-    }
-  end
-
-  def note(entry_id, note_id)
-    all_notes(entry_id)[note_id]
-  end
-
-  # Add note to an entry
-  def add_note(entry_id, note)
-    all_notes(entry_id) << note
-  end
-
-  def edit_note(entry_id, note_id, note)
-    all_entries[entry_id][:notes][note_id] = note
-  end
-
-  def delete_note(entry_id, note_id)
-    all_entries[entry_id][:notes].delete_at(note_id)
-  end
-
-  def phrase(entry_id)
-    all_entries[entry_id][:phrase]
-  end
-
-  def response(entry_id)
-    all_entries[entry_id][:response]
-  end
-
-  def set_phrase(entry_id, phrase)
-    all_entries[entry_id][:phrase] = phrase
-  end
-
-  def set_response(entry_id, response)
-    all_entries[entry_id][:response] = response
-  end
-end
-
 helpers do
   # Count number of notes in an entry
   def count_notes(entry_id)
@@ -128,11 +69,6 @@ helpers do
    # Count number of pages
    def page_count
     total_entries % 5 == 0 ? (total_entries / 5) : (total_entries / 5) + 1
-  end
-
-  # This splits input array into nested arrays for pagination
-  def split_array(entries_array)
-    entries_array.each_slice(5).to_a
   end
 
   # Count total entries
@@ -146,8 +82,6 @@ helpers do
   end
 end
 
-
-
 # Sign in page
 get "/users/signin" do
   if session[:username]
@@ -157,7 +91,11 @@ get "/users/signin" do
   erb :signin
 end
 
-# I think this is sending us into an infinite loop
+# This splits input array into nested arrays for pagination
+def split_array(entries_array)
+  entries_array.each_slice(5).to_a
+end
+
 get '/' do
   redirect_if_logged_out
   redirect "/entries_page/0"
@@ -220,11 +158,10 @@ post '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
   note = params[:note].strip
   @storage.edit_note(entry_id, @note_id, note)
 
-  if add_flash_message_to_session(note, "Note", "edited").class == Array
-    erb :edit_note
-  else
-    redirect "/entries/#{entry_id}"
-  end
+  add_flash_message_to_session(note, "Note", "edited")
+  return erb :edit_note unless session[:failure].empty?
+
+  redirect "/entries/#{entry_id}"
 end
 
 # Delete note of an entry
@@ -283,7 +220,8 @@ end
 # Delete an entry
 post '/entries/:id/destroy' do |id|
   redirect_if_logged_out
-  @storage.all_entries.delete_at(id.to_i)
+  @storage.delete_entry(id.to_i)
+
   session[:success] = "The Entry has been successfully deleted"
 
   redirect '/'
