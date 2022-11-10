@@ -27,8 +27,7 @@ end
 
 before do
   @storage = SessionPersistance.new(session)
-  session[:entries] ||= []
-  @entries = session[:entries]
+  session[:failure] ||= []
   
   # dummy data to test
   if session[:entries] == []
@@ -96,15 +95,13 @@ end
 
 # Sets the session to the correct state (put in the stripped input!)
 # input_type = "Phrase" || "Response"
-def input_session_message(input, input_type)
-  session[:failure] ||= []
-  
+def add_flash_message_to_session(input, input_type, input_action="entered")
   if !(1..100).cover? input.size
     session[:failure] << "#{input_type} must be between 1-100 characters."
-  elsif @entries.any? { |e| e[:phrase] == input} && input_type == "Phrase"
+  elsif @storage.all_entries.any? { |e| e[:phrase] == input} && input_type == "Phrase"
     session[:failure] << "#{input_type} must be unique."
   else
-    session[:success] = "The #{input_type} was entered successfully."
+    session[:success] = "The #{input_type} was #{input_action} successfully."
   end
 end
 
@@ -132,12 +129,45 @@ class SessionPersistance
   def all_entries
     @session[:entries]
   end
+
+  def find_entry(entry_id)
+    @storage.all_entries[entry_id]
+  end
+
+  def all_notes(entry_id)
+    all_entries[entry_id][:notes]
+  end
+
+  def phrase(entry_id)
+    all_entries[entry_id][:phrase]
+  end
+
+  def response(entry_id)
+    all_entries[entry_id][:response]
+  end
+
+  def set_phrase(entry_id, phrase)
+    all_entries[entry_id][:phrase] = phrase
+  end
+
+  def set_response(entry_id, response)
+    all_entries[entry_id][:response] = response
+  end
+
+  def note(entry_id, note_id)
+    all_notes(entry_id)[note_id]
+  end
 end
 
 helpers do
   # Count number of notes in an entry
   def count_notes(entry_id)
-    @storage.all_entries[entry_id][:notes].count
+    @storage.all_notes(entry_id).count
+  end
+
+   # Count number of pages
+   def page_count
+    total_entries % 5 == 0 ? (total_entries / 5) : (total_entries / 5) + 1
   end
 
   # This splits input array into nested arrays for pagination
@@ -147,19 +177,13 @@ helpers do
 
   # Count total entries
   def total_entries
-    @entries.count
-  end
-
-  # Count number of pages
-  def page_count
-    total_entries % 5 == 0 ? (total_entries / 5) : (total_entries / 5) + 1
+    @storage.all_entries.count
   end
 end
 
 # Add note to an entry
 def add_note(entry_id, note)
-  notes = @entries[id.to_i][:notes]
-  notes << note
+  @storage.all_notes << note
 end
 
 # Sign in page
@@ -171,44 +195,18 @@ get "/users/signin" do
   erb :signin
 end
 
-# User/pass validation
-post '/users/signin' do
-  @user = params[:username]
-  pass = params[:password]
-
-  if @user == "admin" && pass == "password"
-    session[:welcome] = "Welcome!"
-    session[:username] = @user
-    redirect session[:target_path]
-  else
-    session[:failure] = "Invalid credentials!"
-    erb :signin
-  end
-end
-
-# User sign out
-post '/users/signout' do
-  session.delete(:username)
-  session[:success] = "You are signed out now."
-  redirect "/"
-end
-
 # I think this is sending us into an infinite loop
 get '/' do
   redirect_if_logged_out
+
   redirect "/entries_page/0"
 end
-
-# # View all entries
-# get '/entries' do
-#   erb :entries
-# end
 
 # View all entries in a page
 get '/entries_page/:id' do |id|
   redirect_if_logged_out
 
-  @nested_array = split_array(@entries)
+  @nested_array = split_array(@storage.all_entries)
   @page_id = params[:id].to_i
 
   erb :entries_page
@@ -223,17 +221,24 @@ end
 # Entry edit page
 get '/entries/:id/edit' do |id|
   redirect_if_logged_out
-  @phrase = @entries[id.to_i][:phrase]
-  @entry_response = @entries[id.to_i][:response]
+  # @phrase = @storage.all_entries[id.to_i][:phrase]
+  id = id.to_i
+
+  @phrase = @storage.phrase(id)
+  # Note: @response is reserved and doesn't work
+  @entry_response = @storage.response(id)
   erb :edit_entry
 end
 
 # View a specific entry
 get '/entries/:id' do |id|
   redirect_if_logged_out
-  @notes = @entries[id.to_i][:notes]
-  @phrase = @entries[id.to_i][:phrase]
-  @entry_response = @entries[id.to_i][:response]
+
+  id = id.to_i
+  @notes = @storage.all_notes(id)
+  @phrase = @storage.phrase(id)
+  # Note: @response is reserved and doesn't work
+  @entry_response = @storage.response(id)
 
   erb :entry
 end
@@ -241,26 +246,29 @@ end
 # Edit page for note of an entry
 get '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
   redirect_if_logged_out
-  @note = @entries[entry_id.to_i][:notes][note_id.to_i]
+  # @note = @storage.all_entries[entry_id.to_i][:notes][note_id.to_i]
+  @note = @storage.note(entry_id.to_i, note_id.to_i)
   erb :edit_note
 end
 
 # Edit note of an entry
 post '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
   redirect_if_logged_out
-  note = params[:note]
-  @entries[entry_id.to_i][:notes][note_id.to_i] = note
+  note = params[:note].strip
+  @storage.all_entries[entry_id.to_i][:notes][note_id.to_i] = note
 
-  input_session_message(note, "Note")
-
-  redirect "/entries/#{entry_id}"
+  if add_flash_message_to_session(note, "Note", "edited").class == Array
+    erb :edit_note
+  else
+    redirect "/entries/#{entry_id}"
+  end
 end
 
 # Delete note of an entry
 post '/entries/:entry_id/notes/:note_id/destroy' do |entry_id, note_id|
   redirect_if_logged_out
-  @entries[entry_id.to_i][:notes].delete_at(note_id.to_i)
-  session[:success] = "The note has been deleted!"
+  @storage.all_entries[entry_id.to_i][:notes].delete_at(note_id.to_i)
+  session[:success] = "The Note has been deleted!"
 
   redirect "/entries/#{entry_id}"
 end
@@ -268,10 +276,10 @@ end
 # Add note to an entry
 post '/entries/:id/notes' do |id|
   redirect_if_logged_out
-  notes = @entries[id.to_i][:notes]
+  notes = @storage.all_entries[id.to_i][:notes]
   notes << params[:note]
 
-  input_session_message(params[:note], "Note")
+  add_flash_message_to_session(params[:note], "Note")
 
   redirect "/entries/#{id}"
 end
@@ -279,8 +287,10 @@ end
 # Edit an entry
 post '/entries/:id/edit' do |id|
   redirect_if_logged_out
-  @entries[id.to_i][:phrase] = params[:phrase_name]
-  @entries[id.to_i][:response] = params[:response_name]
+  id = id.to_i
+  
+  @storage.set_phrase(id, params[:phrase_name]) 
+  @storage.set_response(id, params[:response_name])
 
   redirect "/entries/#{id}"
 end
@@ -291,29 +301,50 @@ post "/add_entry" do
   new_phrase = params[:new_phrase].strip
   new_response = params[:new_response].strip
 
-  input_session_message(new_phrase, "Phrase")
-  input_session_message(new_response, "Response")
+  add_flash_message_to_session(new_phrase, "Phrase")
+  add_flash_message_to_session(new_response, "Response")
 
   unless session[:failure].empty?
     return erb :add_entry
   end
-  # Idea: 
-    # Tell user that phrase was valid, and response was invalid and vice verse
-    # If both are correct, then give a valid output instead
 
-  session[:entries] << {
+  session[:success] = "Entry entered successfully"
+  @storage.all_entries << {
     phrase: new_phrase,
     response: new_response,
     notes: []
   }
+  
   redirect "/entries_page/0"
 end
 
 # Delete an entry
 post '/entries/:id/destroy' do |id|
   redirect_if_logged_out
-  @entries.delete_at(id.to_i)
+  @storage.all_entries.delete_at(id.to_i)
   session[:success] = "The entry has been successfully deleted"
 
   redirect '/'
+end
+
+# User/pass validation
+post '/users/signin' do
+  @user = params[:username]
+  pass = params[:password]
+
+  if @user == "admin" && pass == "password"
+    session[:success] = "Welcome!"
+    session[:username] = @user
+    redirect session[:target_path]
+  else
+    session[:failure] << "Invalid credentials!"
+    erb :signin
+  end
+end
+
+# User sign out
+post '/users/signout' do
+  session.delete(:username)
+  session[:success] = "You are signed out now."
+  redirect "/"
 end

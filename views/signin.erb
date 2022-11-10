@@ -1,4 +1,9 @@
-<%= session.delete(:failure) %>
+<% if session[:failure] %>
+  <% session[:failure].each do |el|%>
+    <p style="font-size:14px; color:red; font-weight:bold; font-style:italic;"><%= el %></p>
+  <% end %>
+  <% session.delete(:failure) %>
+<% end %>
 
 <form action="/users/signin"  method="post">
   <dl>

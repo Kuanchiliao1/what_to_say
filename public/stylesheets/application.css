@@ -1,0 +1,15 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  }
+
+body {
+  margin: 0px;
+}
+
+.container {
+  display:flex;
+  justify-content: space-between;
+  border: pink solid;
+}
