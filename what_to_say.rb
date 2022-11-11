@@ -27,7 +27,7 @@ configure(:development) do
 end
 
 before do
-  @storage = DatabasePersistance.new
+  @storage = DatabasePersistance.new(logger)
   session[:failure] ||= []
 end
 

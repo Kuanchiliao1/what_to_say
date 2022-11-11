@@ -1,18 +1,38 @@
 require "pg"
 
 class DatabasePersistance
-  def initialize
+  def initialize(logger)
+    @logger = logger
     @db = PG.connect(dbname: "entries")
   end
 
+  def query(statement, *params)
+    @logger.info "#{statement}: #{params}"
+    @db.exec_params(statement, params)
+  end
+
   def all_entries
-    binding.pry
     sql = "SELECT * FROM entries"
-    result = @db.exec(sql)
-    # @session[:entries]
+    result = query(sql)
+
+    result.map do |tuple|
+      note_sql = "SELECT * FROM notes"
+      result = query(note_sql)
+
+      notes = (result.map do |note_tuple|
+        note_tuple["note"]
+      end)
+
+      {id: tuple["id"], phrase: tuple["phrase"], response: tuple["response"], notes: notes}
+    end
   end
 
   def entry(entry_id)
+    sql = "SELECT * FROM entries WHERE id = $1"
+    result = query(sql, entry_id)
+    tuple = result.first
+
+    { id: tuple["id"], phrase: tuple["phrase"], response: tuple["response"], notes: [] }
     # @storage.all_entries[entry_id]
   end
 
@@ -29,7 +49,7 @@ class DatabasePersistance
   end
 
   def all_notes(entry_id)
-    # all_entries[entry_id][:notes]
+    all_entries[entry_id][:notes]
   end
 
   def note(entry_id, note_id)
@@ -65,25 +85,3 @@ class DatabasePersistance
     # all_entries[entry_id][:response] = response
   end
 end
-
-# class DatabasePersistance
-#   def initialize(logger)
-#     @logger = logger
-#     @db = PG.connect(dbname: "phrases")
-#   end
-
-#   def query(statement, *params)
-#     # Not sure about these lines
-#     @logger.info "#{statement}: #{params}"
-#     db.exec_params(statement, params)
-#   end
-
-#   def all_entries
-#     sql = "SELECT * FROM entries"
-#     result = query(sql)
-
-#     result.map do |tuple|
-      
-#     end
-#   end
-# end
