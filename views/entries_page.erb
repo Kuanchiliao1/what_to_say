@@ -3,7 +3,7 @@
 <hr style="width:100%", size="3", color=black>
 
 <% @nested_array[@page_id].each.with_index do |entry, index| %>
-  <% entry_index = index + (@page_id * 5) %>
+  <% entry_index = entry[:id].to_i %>
   <p>Phrase: <strong><%= entry[:phrase] %></strong></p>
   <p>Response: <strong><%= entry[:response] %></strong></p>
   <p>Note Count: <strong><%= count_notes(entry_index) %></strong></p>

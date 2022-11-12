@@ -16,12 +16,13 @@ class DatabasePersistance
     result = query(sql)
 
     result.map do |tuple|
-      note_sql = "SELECT * FROM notes"
-      result = query(note_sql)
+      entry_id = tuple["id"]
+      note_sql = "SELECT * FROM notes WHERE entry_id = $1"
+      result = query(note_sql, entry_id)
 
-      notes = (result.map do |note_tuple|
+      notes = result.map do |note_tuple|
         note_tuple["note"]
-      end)
+      end
 
       {id: tuple["id"], phrase: tuple["phrase"], response: tuple["response"], notes: notes}
     end
@@ -30,26 +31,31 @@ class DatabasePersistance
   def entry(entry_id)
     sql = "SELECT * FROM entries WHERE id = $1"
     result = query(sql, entry_id)
-    tuple = result.first
 
+    tuple = result.first
     { id: tuple["id"], phrase: tuple["phrase"], response: tuple["response"], notes: [] }
     # @storage.all_entries[entry_id]
   end
 
   def add_entry(phrase, response)
-    # all_entries << {
-    #   phrase: phrase,
-    #   response: response,
-    #   notes: []
-    # }
+    sql = "INSERT INTO entries (phrase, response) VALUES ($1, $2)"
+    query(sql, phrase, response)
   end
 
+  # Need to add another query bc of foreign key constraint
   def delete_entry(entry_id)
-    # all_entries.delete_at(entry_id)
+    sql = "DELETE FROM entries WHERE id = $1"
+    query(sql, entry_id)
   end
 
   def all_notes(entry_id)
-    all_entries[entry_id][:notes]
+    # all_entries[entry_id][:notes]
+    sql = "SELECT * FROM notes WHERE entry_id = $1"
+    result = query(sql, entry_id)
+
+    result.map do |tuple|
+      tuple["note"]
+    end
   end
 
   def note(entry_id, note_id)
@@ -59,6 +65,8 @@ class DatabasePersistance
   # Add note to an entry
   def add_note(entry_id, note)
     # all_notes(entry_id) << note
+    sql = "INSERT INTO notes (entry_id, note) VALUES ($1, $2);"
+    query(sql, entry_id, note)
   end
 
   def edit_note(entry_id, note_id, note)
@@ -70,18 +78,25 @@ class DatabasePersistance
   end
 
   def phrase(entry_id)
-    # all_entries[entry_id][:phrase]
+    all_entries[entry_id][:phrase]
   end
 
   def response(entry_id)
-    # all_entries[entry_id][:response]
+    all_entries[entry_id][:response]
   end
 
-  def set_phrase(entry_id, phrase)
-    # all_entries[entry_id][:phrase] = phrase
+  def update_entry(entry_id, phrase, response)
+    sql = "UPDATE entries SET phrase = $2 WHERE id = $1;"
+    + "UPDATE entries SET response = $3 WHERE id = $1;"
+    binding.pry
+    result = query(sql, entry_id, phrase, response)
   end
 
-  def set_response(entry_id, response)
-    # all_entries[entry_id][:response] = response
-  end
+  # def set_phrase(entry_id, phrase)
+  #   # all_entries[entry_id][:phrase] = phrase
+  # end
+
+  # def set_response(entry_id, response)
+  #   # all_entries[entry_id][:response] = response
+  # end
 end

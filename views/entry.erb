@@ -6,6 +6,7 @@
 <a href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
 <p>Notes: </p>
   <div class="notecard-container">
+  <% binding.pry %>
     <% @notes.each_with_index do |note, index| %>
       <div class="notecard">
         <%= note %>

@@ -1,10 +1,3 @@
-
-
-=begin
-- Get everything into a sessionpersistance thing
-  - 
-=end
-
 require "sinatra"
 require "sinatra/reloader"
 require "tilt/erubis"
@@ -18,12 +11,7 @@ configure do
   enable :sessions
   set :session_secret, '\x12\x9A\x81*U\xCFT\x91\xB7;\xAF\xF2I]\x9C@L\xD5\xB8;\x00\x87\xF3\x82yS(r\x90\xC8\x86\xBB\x13\x92\xA83$O'
   set :erb, escape_html: true
-end
-
-# Move the config settings for development into one location
-configure(:development) do
-  require "sinatra/reloader"
-  also_reload "database_persistence.rb"
+  also_reload "database_persistance.rb" if development?
 end
 
 before do
@@ -34,6 +22,7 @@ end
 # Sets the session to the correct state (put in the stripped input!)
 # input_type = "Phrase" || "Response"
 def add_flash_message_to_session(input, input_type, input_action="entered")
+  binding.pry
   if !(1..100).cover? input.size
     session[:failure] << "#{input_type} must be between 1-100 characters."
   elsif @storage.all_entries.any? { |e| e[:phrase] == input} && input_type == "Phrase"
@@ -121,11 +110,11 @@ end
 get '/entries/:id/edit' do |id|
   redirect_if_logged_out
   # @phrase = @storage.all_entries[id.to_i][:phrase]
-  id = id.to_i
+  entry_id = id.to_i
 
-  @phrase = @storage.phrase(id)
+  @phrase = @storage.phrase(entry_id)
   # Note: @response is reserved and doesn't work
-  @entry_response = @storage.response(id)
+  @entry_response = @storage.response(entry_id)
   erb :edit_entry
 end
 
@@ -177,14 +166,16 @@ end
 # Add note to an entry
 post '/entries/:id/notes' do |id|
   redirect_if_logged_out
-
+  entry_id = id.to_i
+  
   @notes = @storage.all_notes(id.to_i)
   note = params[:note].strip
-
+  
   add_flash_message_to_session(note, "Note")
   return erb :entry unless session[:failure].empty?
+  binding.pry
   
-  @storage.add_note(id.to_i, note)
+  @storage.add_note(entry_id, note)
 
   redirect "/entries/#{id}"
 end
@@ -192,12 +183,17 @@ end
 # Edit an entry
 post '/entries/:id/edit' do |id|
   redirect_if_logged_out
-  id = id.to_i
-  
-  @storage.set_phrase(id, params[:phrase_name]) 
-  @storage.set_response(id, params[:response_name])
+  entry_id = id.to_i
 
-  redirect "/entries/#{id}"
+  phrase = params[:phrase_name]
+  response = params[:response_name]
+
+  @storage.update_entry(entry_id, phrase, response)
+  
+  # @storage.set_phrase(entry_id, params[:phrase_name]) 
+  # @storage.set_response(entry_id, params[:response_name])
+
+  redirect "/entries/#{entry_id}"
 end
 
 # Adding a complete entry
