@@ -4,16 +4,16 @@
 <p>Phrase: <strong><%= @phrase %></strong></p>
 <p>Response: <strong><%= @entry_response %></strong></p>
 <a href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
-<p>Notes: </p>
+<p><strong>Notes: </strong></p>
   <div class="notecard-container">
-  <% binding.pry %>
-    <% @notes.each_with_index do |note, index| %>
+    <% @notes.each do |note| %>
+      <% note_index = note[:id] %>
       <div class="notecard">
-        <%= note %>
-        <a href='/entries/<%= params[:id] %>/notes/<%= index %>/edit'>Edit Note</a>
-    
-          <form action="/entries/<%= params[:id] %>/notes/<%= index %>/destroy" method="post">
+        <%= note[:content] %>
+        <a href='/entries/<%= params[:id] %>/notes/<%= note_index %>/edit'>Edit Note</a>
+          <form action="/entries/<%= params[:id] %>/notes/<%= note_index %>/destroy" method="post">
         <button type="submit">Delete Note</button>
+        <p>Created at: <%= note[:time][0..15] %></p>
           </form>
           <% end %>
       </div>

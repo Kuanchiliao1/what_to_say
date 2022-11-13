@@ -4,19 +4,19 @@
   box-sizing: border-box;
   }
 
-body {
-  margin: 0px;
+  body {
+  background: lightgrey;
 }
 
 .container {
   display:flex;
   justify-content: space-between;
-  border: pink solid;
+  border: blue solid;
 }
 
 .notecard-container {
   display: flex;
-  border: pink solid;
+  border: blue solid;
   flex-direction: column;
 }
 

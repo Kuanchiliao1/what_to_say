@@ -22,7 +22,6 @@ end
 # Sets the session to the correct state (put in the stripped input!)
 # input_type = "Phrase" || "Response"
 def add_flash_message_to_session(input, input_type, input_action="entered")
-  binding.pry
   if !(1..100).cover? input.size
     session[:failure] << "#{input_type} must be between 1-100 characters."
   elsif @storage.all_entries.any? { |e| e[:phrase] == input} && input_type == "Phrase"
@@ -71,6 +70,11 @@ helpers do
   end
 end
 
+# This splits input array into nested arrays for pagination
+def split_array(entries_array)
+  entries_array.each_slice(5).to_a
+end
+
 # Sign in page
 get "/users/signin" do
   if session[:username]
@@ -78,11 +82,6 @@ get "/users/signin" do
   end
   
   erb :signin
-end
-
-# This splits input array into nested arrays for pagination
-def split_array(entries_array)
-  entries_array.each_slice(5).to_a
 end
 
 get '/' do
@@ -100,33 +99,34 @@ get '/entries_page/:id' do |id|
   erb :entries_page
 end
 
-# Add entry page
+# Add Entry page
 get '/entries/add' do
   redirect_if_logged_out
   erb :add_entry
 end
 
-# Entry edit page
+# Edit Entry page
 get '/entries/:id/edit' do |id|
   redirect_if_logged_out
   # @phrase = @storage.all_entries[id.to_i][:phrase]
   entry_id = id.to_i
 
-  @phrase = @storage.phrase(entry_id)
+  @phrase = @storage.entry(entry_id)[:phrase]
   # Note: @response is reserved and doesn't work
-  @entry_response = @storage.response(entry_id)
+  @entry_response = @storage.entry(entry_id)[:response]
   erb :edit_entry
 end
 
-# View a specific entry
+# View a specific Entry
 get '/entries/:id' do |id|
   redirect_if_logged_out
   id = id.to_i
 
   @notes = @storage.all_notes(id)
-  @phrase = @storage.phrase(id)
-  # Note: @response is reserved and doesn't work
-  @entry_response = @storage.response(id)
+  @phrase = @storage.entry(id)[:phrase]
+  
+  # Note: @response is reserved
+  @entry_response = @storage.entry(id)[:response]
 
   erb :entry
 end
@@ -134,8 +134,26 @@ end
 # Edit page for note of an entry
 get '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
   redirect_if_logged_out
+
   @note = @storage.note(entry_id.to_i, note_id.to_i)
   erb :edit_note
+end
+
+# Add note to an entry
+post '/entries/:id/notes' do |id|
+  redirect_if_logged_out
+  entry_id = id.to_i
+  @phrase = @storage.entry(id)[:phrase]
+  @entry_response = @storage.entry(id)[:response]
+  
+  @notes = @storage.all_notes(id.to_i)
+  note = params[:note].strip
+  
+  add_flash_message_to_session(note, "Note")
+  return erb :entry unless session[:failure].empty?
+  
+  @storage.add_note(entry_id, note)
+  redirect "/entries/#{id}"
 end
 
 # Edit note of an entry
@@ -143,12 +161,12 @@ post '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
   redirect_if_logged_out
   @note_id = note_id.to_i
   entry_id = entry_id.to_i
+  @note = params[:note].strip
 
-  note = params[:note].strip
-  @storage.edit_note(entry_id, @note_id, note)
-
-  add_flash_message_to_session(note, "Note", "edited")
+  add_flash_message_to_session(@note, "Note", "edited")
   return erb :edit_note unless session[:failure].empty?
+  
+  @storage.edit_note(@note_id, @note)
 
   redirect "/entries/#{entry_id}"
 end
@@ -163,41 +181,8 @@ post '/entries/:entry_id/notes/:note_id/destroy' do |entry_id, note_id|
   redirect "/entries/#{entry_id}"
 end
 
-# Add note to an entry
-post '/entries/:id/notes' do |id|
-  redirect_if_logged_out
-  entry_id = id.to_i
-  
-  @notes = @storage.all_notes(id.to_i)
-  note = params[:note].strip
-  
-  add_flash_message_to_session(note, "Note")
-  return erb :entry unless session[:failure].empty?
-  binding.pry
-  
-  @storage.add_note(entry_id, note)
-
-  redirect "/entries/#{id}"
-end
-
-# Edit an entry
-post '/entries/:id/edit' do |id|
-  redirect_if_logged_out
-  entry_id = id.to_i
-
-  phrase = params[:phrase_name]
-  response = params[:response_name]
-
-  @storage.update_entry(entry_id, phrase, response)
-  
-  # @storage.set_phrase(entry_id, params[:phrase_name]) 
-  # @storage.set_response(entry_id, params[:response_name])
-
-  redirect "/entries/#{entry_id}"
-end
-
 # Adding a complete entry
-post "/add_entry" do
+post "/entries/add" do
   redirect_if_logged_out
   new_phrase = params[:new_phrase].strip
   new_response = params[:new_response].strip
@@ -205,12 +190,30 @@ post "/add_entry" do
   add_flash_message_to_session(new_phrase, "Phrase")
   add_flash_message_to_session(new_response, "Response")
 
-  return erb :entry unless session[:failure].empty?
+  return erb :add_entry unless session[:failure].empty?
 
   session[:success] = "The Entry has been successfully entered."
   @storage.add_entry(new_phrase, new_response)
 
   redirect "/entries_page/0"
+end
+
+# Edit an entry
+post '/entries/:id/edit' do |id|
+  redirect_if_logged_out
+  entry_id = id.to_i
+  @phrase = params[:phrase_name].strip
+  @entry_response = params[:response_name].strip
+
+  add_flash_message_to_session(@phrase, "Phrase")
+  add_flash_message_to_session(@entry_response, "Response")
+
+  return erb :edit_entry unless session[:failure].empty?
+  
+  session[:success] = "The Entry has been successfully edited"
+  @storage.edit_entry(entry_id, @phrase, @entry_response)
+  
+  redirect "/entries/#{entry_id}"
 end
 
 # Delete an entry
@@ -219,7 +222,6 @@ post '/entries/:id/destroy' do |id|
   @storage.delete_entry(id.to_i)
 
   session[:success] = "The Entry has been successfully deleted"
-
   redirect '/'
 end
 

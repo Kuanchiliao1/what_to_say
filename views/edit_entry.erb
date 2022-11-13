@@ -1,4 +1,4 @@
-<h2>Edit Entry</h2>
+<h2>Edit Entry (Phrase must be unique)</h2>
 
 <form action="/entries/<%= params[:id] %>/edit" method="post">
   <dl>
@@ -7,13 +7,13 @@
       </label>
     </dt>
     <dd>
-      <textarea name="phrase_name"><%= @phrase.strip %>
+      <textarea name="phrase_name"><%= @phrase %>
         </textarea>
     </dd>
     <label for="response_name">--------Edit response name
       </label>
     <dd>
-      <textarea name="response_name"><%= @entry_response.strip %>
+      <textarea name="response_name"><%= @entry_response %>
       </textarea>
     </dd>
   </dl>

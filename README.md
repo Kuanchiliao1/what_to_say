@@ -1,8 +1,17 @@
 Provide a README.md file with your project that describes any details of your project that you think the grader will need to understand how it works and how to use it. You can also use this file to talk about any design choices or trade-offs you made. At a minimum, the README.md file should mention the following information:
 
 
-The version of Ruby you used to run this application.
-The browser (including version number) that you used to test this application.
+Ruby version: 3.1.2
+Browser and version: Brave v1.45.123
+PostgreSQL version: 12.12
+
+Instructions:
+- 
+
+
+Assumptions and Tradeoffs:
+
+
 The version of PostgreSQL you used to create any databases.
 How to install, configure, and run the application.
 Any additional details the grader may need to run your code.
@@ -59,67 +68,3 @@ end -->
 
 
 
-
-
-
-if session[:entries] == []
-    session[:entries] << {
-      phrase: "How are you?", 
-      response: "I'm doing well, and you?", 
-      notes: ["One of the most popular greetings in the United States", "People love it!"]}
-    
-    session[:entries] << {
-      phrase: "Hey! What do you think you're doing?", 
-      response: "Nothing! Just mindin my own business, and you sir?", 
-      notes: ["This is a terrible response!", "Not sure I like this one at all..."]}
-    
-    session[:entries] << {
-      phrase: "test phrase 560", 
-      response: "this is a super generic response for testing", 
-      notes: []}
-    
-    session[:entries] << {
-      phrase: "more testing phrases", 
-      response: "a response to a phrase", 
-      notes: []}
-    
-    session[:entries] << {
-      phrase: "more testing phrases", 
-      response: "asldkfjasd;klj", 
-      notes: []}
-    
-    session[:entries] << {
-      phrase: "i funno anymore...", 
-      response: "but you CAN know it!", 
-      notes: []}
-
-      session[:entries] << {
-        phrase: "How are you?", 
-        response: "I'm doing well, and you?", 
-        notes: []}
-      
-      session[:entries] << {
-        phrase: "Hey! What do you think you're doing?", 
-        response: "Nothing! Just mindin my own business, and you sir?", 
-        notes: ["This is a terrible response!", "Not sure I like this one at all..."]}
-      
-      session[:entries] << {
-        phrase: "test phrase 560", 
-        response: "this is a super generic response for testing", 
-        notes: []}
-      
-      session[:entries] << {
-        phrase: "more testing phrases", 
-        response: "a response to a phrase", 
-        notes: []}
-      
-      session[:entries] << {
-        phrase: "more testing phrases", 
-        response: "asldkfjasd;klj", 
-        notes: []}
-      
-      session[:entries] << {
-        phrase: "i funno anymore...", 
-        response: "but you CAN know it!", 
-        notes: []}
-  end
