@@ -3,20 +3,16 @@
 *::after {
   box-sizing: border-box;
   }
-
-  body {
-  background: lightgrey;
-}
-
+  
 .container {
   display:flex;
   justify-content: space-between;
-  border: blue solid;
+  border: pink solid;
 }
 
 .notecard-container {
   display: flex;
-  border: blue solid;
+  border: pink solid;
   flex-direction: column;
 }
 

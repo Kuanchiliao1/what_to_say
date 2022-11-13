@@ -24,7 +24,7 @@ class DatabasePersistance
         note_tuple["note"]
       end
 
-      {id: tuple["id"], phrase: tuple["phrase"], response: tuple["response"], notes: notes}
+      {id: tuple["id"], phrase: tuple["phrase"], response: tuple["response"], notes: notes, time: tuple["created_at"] }
     end
   end
 
@@ -33,7 +33,8 @@ class DatabasePersistance
     result = query(sql, entry_id)
 
     tuple = result.first
-    { id: tuple["id"], phrase: tuple["phrase"], response: tuple["response"], notes: [] }
+    return false if tuple.nil?
+    { id: tuple["id"], phrase: tuple["phrase"], response: tuple["response"], notes: [], time: tuple["created_at"] }
   end
 
   def add_entry(phrase, response)
@@ -65,8 +66,9 @@ class DatabasePersistance
   def note(entry_id, note_id)
     sql = "SELECT * FROM notes WHERE entry_id = $1 AND id = $2"
     result = query(sql, entry_id, note_id)
+    
     tuple = result.first
-
+    return false if tuple.nil?
     {id: tuple["id"], content: tuple["note"], time: tuple["created_at"]}
   end
 

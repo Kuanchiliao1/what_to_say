@@ -5,7 +5,7 @@ CREATE TABLE entries (
   id serial PRIMARY KEY,
   phrase text UNIQUE NOT NULL,
   response text NOT NULL,
-  date_created date NOT NULL DEFAULT current_date
+  created_at timestamp NOT NULL DEFAULT current_timestamp
 );
 
 CREATE TABLE notes (

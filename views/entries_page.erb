@@ -1,4 +1,4 @@
-<p>This your personal phrasebook for recording your favorite phrases! Use Add Entry to add a phrase/response pair, and select Edit/View to view your notes on that particular phrase</p>
+<p>This your personal phrasebook for recording responses to your favorite phrases! Use Add Entry to add a phrase/response pair, and click Edit/View to view your notes on that particular phrase</p>
 <p style="display: inline;">Pages:</p>
 <% (page_count).times do |num|%>
   <a href=<%= "/entries_page/#{num}" %>><%= num + 1%></a>
@@ -9,9 +9,11 @@
 
 <% @nested_array[@page_id].each do |entry| %>
   <% entry_index = entry[:id].to_i %>
-  <p>Phrase: <strong><%= entry[:phrase] %></strong></p>
-  <p>Response: <strong><%= entry[:response] %></strong></p>
-  <p>Note Count: <strong><%= count_notes(entry_index) %></strong></p>
+  <p><strong>Phrase: </strong><%= entry[:phrase] %></p>
+  <p><strong>Response: </strong><%= entry[:response] %></p>
+  <hr align="left", style="width:50%", size="1", color=lightgrey>
+  <p><strong>Note Count: </strong><%= count_notes(entry_index) %></p>
+  <p>Created at: <%= entry[:time][0..15] %> </p>
   
   <a href="/entries/<%= entry_index %>">Edit/View</a><br>
 

@@ -6,7 +6,10 @@ Browser and version: Brave v1.45.123
 PostgreSQL version: 12.12
 
 Instructions:
-- 
+- Install the Ruby, Browser, and PSQL to the versions specified above
+- Download and extract the zip file
+- Install bundler if not already done
+- Load datadump using...
 
 
 Assumptions and Tradeoffs:

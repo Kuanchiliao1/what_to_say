@@ -1,37 +1,30 @@
 <p style="font-size:20px; color:#538b01; font-weight:bold; font-style:italic;"><%= session.delete(:success) %></p>
 
 
-<p>Phrase: <strong><%= @phrase %></strong></p>
-<p>Response: <strong><%= @entry_response %></strong></p>
+<p><strong>Phrase: </strong><%= @phrase %> </p>
+<p><strong>Response: </strong><%= @entry_response %> </p>
 <a href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
-<p><strong>Notes: </strong></p>
+<p><strong>Your Notes: </strong></p>
+  <hr style="width:100%", size="3", color=black>
+
   <div class="notecard-container">
     <% @notes.each do |note| %>
       <% note_index = note[:id] %>
       <div class="notecard">
         <%= note[:content] %>
-        <a href='/entries/<%= params[:id] %>/notes/<%= note_index %>/edit'>Edit Note</a>
+        <p><a href='/entries/<%= params[:id] %>/notes/<%= note_index %>/edit'>Edit Note</a></p>
           <form action="/entries/<%= params[:id] %>/notes/<%= note_index %>/destroy" method="post">
         <button type="submit">Delete Note</button>
         <p>Created at: <%= note[:time][0..15] %></p>
           </form>
+            <hr align="left", style="width:50%", size="1", color=lightgrey>
           <% end %>
       </div>
   </div>
 
 <form action="/entries/<%= params[:id] %>/notes" method="post">
-  <dl>
-    <dt>
-      <label for="note">--------Add note
-      </label>
-    </dt>
-    <dd>
-      <input name="note" value="<%= params[:note] %>">
-    </dd>
-  </dl>
-  <fieldset>
-    <input type="submit" value="Add Note">
-  </fieldset>
+  <input name="note" value="<%= params[:note] %>">
+  <input type="submit" value="Add Note">
 </form>
 
 <a href="/entries_page/0">home</a>
