@@ -1,6 +1,3 @@
-Provide a README.md file with your project that describes any details of your project that you think the grader will need to understand how it works and how to use it. You can also use this file to talk about any design choices or trade-offs you made. At a minimum, the README.md file should mention the following information:
-
-
 Ruby version: 3.1.2
 Browser and version: Brave v1.45.123
 PostgreSQL version: 12.12
@@ -8,66 +5,25 @@ PostgreSQL version: 12.12
 Instructions:
 - Install the Ruby, Browser, and PSQL to the versions specified above
 - Download and extract the zip file
-- Install bundler if not already done
-- Load datadump using...
+- Install bundler gem
+- Run `bundler install` in terminal
+*- Create database by using `createdb entries` in terminal
+*- Load database dump using `psql -d entries < schema.sql` in terminal
+- Run `bundle exec ruby what_to_say.rb` in terminal
+*- Login using the "admin" as the user and "password" as the password
 
 
-Assumptions and Tradeoffs:
-
-
-The version of PostgreSQL you used to create any databases.
-How to install, configure, and run the application.
-Any additional details the grader may need to run your code.
-
-Keep in mind that your grader may be unfamiliar with the problem domain. If you think that's a possibility, you may wish to add a brief discussion of the vocabulary and concepts used in the application.
+Data structures:
+- An Entry consists of an id, phrase, response, created on time
+- Entry, Phrase, and Response have a 1:1 relationship
+- A Note has to have one Entry and is a many:1 relationship
+- A Note consists of an id, note, and created on time
 
 
 
 
 
 
-# Search feaature not required for the assignment
-#   # Refactor this later
-#   def display_search(query)
-#     # If redirected to "/" route, query would be nil
-#     # This will set it to an empty string instead
-#     query ||= ""
-    
-#     filtered = @entries.filter_map do |phrase_hash|
-#       phrase = phrase_hash[:phrase]
-#       context = phrase_hash[:context]
-#       response = phrase_hash[:response]
-
-#       next unless phrase.match?(/#{query}/i) || response.match?(/#{query}/i)
-
-#       "<ol>" + phrase + 
-#         # "<li>context: " + context + "</li>" +
-#         "<li>response: " + response + "</li>" +
-#       "</ol>" 
-#     end.join("<br>")
-#     # Have to refactor that to replace regardless of case
-#     filtered.gsub(query, "<span style='color: red'>#{query}</span>")
-#   end
-
-# # HTML for search
-# <hr style="width:100%", size="3", color=black>  
-# <form action="/search" method="get">
-#   <h2>Enter a phrase for which you would like an appropriate response</h2>
-#   <input name="query"><br><br>
-#   <button type="submit">Search</button>
-# </form>
-
-# <% unless display_search(@query) == "" %>
-#   <p>Search results:</p>
-#   <%=  display_search(@query) %>
-# <% end %>
-# <br><br>
-
-
-<!-- get "/search" do
-  @query = params[:query]
-  erb :homepage
-end -->
 
 
 
