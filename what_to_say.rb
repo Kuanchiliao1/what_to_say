@@ -21,12 +21,16 @@ end
 
 helpers do
   # Count number of notes in an entry
-  def count_notes(entry_id)
+  def note_count(entry_id)
     @storage.all_notes(entry_id).count
   end
 
+  def note_page_count(count)
+    count % 5 == 0 ? (count / 5) : (count / 5) + 1
+  end
+
    # Count number of pages
-   def page_count
+  def page_count
     total_entries % 5 == 0 ? (total_entries / 5) : (total_entries / 5) + 1
   end
 
@@ -103,8 +107,9 @@ end
 # View all entries in a page
 get '/entries_page/:id' do |id|
   redirect_if_logged_out
-  if page_count <= id.to_i
-    session[:failure] << "Please provide a valid page number (0-#{page_count - 1})"
+
+  if page_count <= id.to_i || id.match?(/[\D]/) || id != id.to_i.to_s
+    session[:failure] << "Please provide a valid page number (0-#{page_count - 1})."
     redirect '/entries_page/0'
   end
 
@@ -131,12 +136,20 @@ get '/entries/:id/edit' do |id|
   erb :edit_entry
 end
 
-# View a specific Entry
-get '/entries/:id' do |id|
-  redirect_if_logged_out
-  id = id.to_i
+def id_exists(id)
+  
+end
 
-  @notes = @storage.all_notes(id)
+# View a specific Entry
+get '/entries/:id/notes_page/:note_id' do |id, note_id|
+  redirect_if_logged_out
+
+  if total_entries <= id.to_i || id.to_s.match?(/[\D]/) || id != id.to_i.to_s
+    session[:failure] << "Invalid entry number."
+    redirect '/entries_page/0'
+  end
+
+  @notes = split_array(@storage.all_notes(id))
   @phrase = load_entry(id)[:phrase]
   
   @entry_response = load_entry(id)[:response]
@@ -148,13 +161,14 @@ end
 get '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
   redirect_if_logged_out
 
-  @note = load_note(entry_id.to_i, note_id.to_i)
+  @note = load_note(entry_id.to_i, note_id.to_i)[:content]
   erb :edit_note
 end
 
 # Add note to an entry
 post '/entries/:id/notes' do |id|
   redirect_if_logged_out
+
   entry_id = id.to_i
   @phrase = load_entry(id)[:phrase]
   @entry_response = load_entry(id)[:response]
@@ -166,7 +180,7 @@ post '/entries/:id/notes' do |id|
   return erb :entry unless session[:failure].empty?
   
   @storage.add_note(entry_id, note)
-  redirect "/entries/#{id}"
+  redirect "/entries/#{id}/notes_page/0"
 end
 
 # Edit note of an entry
@@ -180,7 +194,7 @@ post '/entries/:entry_id/notes/:note_id/edit' do |entry_id, note_id|
   return erb :edit_note unless session[:failure].empty?
   
   @storage.edit_note(@note_id, @note)
-  redirect "/entries/#{entry_id}"
+  redirect "/entries/#{entry_id}/notes_page/0"
 end
 
 # Delete note of an entry
@@ -190,7 +204,7 @@ post '/entries/:entry_id/notes/:note_id/destroy' do |entry_id, note_id|
   @storage.delete_note(entry_id.to_i, note_id.to_i)
   session[:success] = "The Note has been deleted!"
 
-  redirect "/entries/#{entry_id}"
+  redirect "/entries/#{entry_id}/notes_page/0"
 end
 
 # Adding a complete entry
@@ -222,7 +236,7 @@ post '/entries/:id/edit' do |id|
   
   session[:success] = "The Entry has been successfully edited"
   @storage.edit_entry(entry_id, @phrase, @entry_response)
-  redirect "/entries/#{entry_id}"
+  redirect "/entries/#{entry_id}/notes_page/0"
 end
 
 # Delete an entry

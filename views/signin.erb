@@ -6,14 +6,11 @@
 <% end %>
 
 <form action="/users/signin"  method="post">
-  <dl>
-    <dt>
       <label for="username">Username
         <input id="username" name="username" placeholder="" type="text" value=<%= @user %>><br>
       </label>
       <label for="password">Password
         <input id="password" name="password" type="text" placeholder="" value="">
       </label><br>
-  </dl>
     <input type="submit" value="Sign In">
 </form>

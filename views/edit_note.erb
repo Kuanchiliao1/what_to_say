@@ -7,12 +7,12 @@
       </label>
     </dt>
     <dd>
-      <textarea rows="4" cols="50" name="note"><%= @note[:content] %>
+      <textarea rows="4" cols="50" name="note"><%= @note %>
         </textarea>
     </dd>
   </dl>
   <fieldset>
     <input type="submit" value="Save">
-    <a href="/entries/<%= params[:entry_id] %>">Cancel</a>
+    <a href="/entries/<%= params[:entry_id] %>/notes_page/0">Cancel</a>
   </fieldset>
 </form>
