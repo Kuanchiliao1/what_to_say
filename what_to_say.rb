@@ -61,7 +61,7 @@ end
 
 # Redirect if user is not signed in
 def redirect_if_logged_out
-  unless session[:username]
+  if !session[:username]
     session[:target_path] = @env["REQUEST_PATH"]
     redirect '/users/signin'
   end
