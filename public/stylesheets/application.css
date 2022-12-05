@@ -3,11 +3,16 @@
 *::after {
   box-sizing: border-box;
   }
+
+  /* https://www.toptal.com/designers/subtlepatterns/ */
   
 .container {
+
+}
+
+.user-info-container {
   display:flex;
   justify-content: space-between;
-  border: pink solid;
 }
 
 .notecard-container {
@@ -17,5 +22,4 @@
 }
 
 .notecard {
-  border: pink solid;
 }
