@@ -13,7 +13,7 @@
       <%= note[:content] %></p>
       <p><a href='/entries/<%= params[:id] %>/notes/<%= note_index %>/edit'>Edit Note</a></p>
           <form action="/entries/<%= params[:id] %>/notes/<%= note_index %>/destroy" method="post">
-            <button type="submit">Delete Note</button>
+            <button class="btn btn-primary custom-btn" type="submit">Delete Note</button>
           </form>
       <hr align="left", style="width:50%", size="1", color=lightgrey>
       <p>Created at: <%= note[:time][0..15] %></p>

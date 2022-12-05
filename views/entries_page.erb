@@ -3,7 +3,7 @@
 <% (page_count).times do |num|%>
   <a href=<%= "/entries_page/#{num}" %>><%= num + 1%></a>
 <% end %>
-<p><a href='/entries/add'>Add Entry</a></p>
+<p><a class="btn btn-primary custom-btn" href='/entries/add'>Add Entry</a></p>
 <h2>Your Entries on Page <%= @page_id + 1 %>:</h2>
 <hr style="width:100%", size="3", color=black>
 
@@ -16,10 +16,10 @@
     <p><strong>Note Count: </strong><%= note_count(entry_index) %></p>
     <p>Created at: <%= entry[:time][0..15] %> </p>
     
-    <a href="/entries/<%= entry_index %>/notes_page/0">Edit/View</a><br>
+    <a class="btn btn-primary custom-btn" href="/entries/<%= entry_index %>/notes_page/0">Edit/View</a><br>
 
     <form action="/entries/<%= entry_index %>/destroy" method="post">
-      <button type="submit"">Delete Entry</button>
+      <button class="btn btn-primary custom-btn" type="submit"">Delete Entry</button>
     </form>
 
     <br>

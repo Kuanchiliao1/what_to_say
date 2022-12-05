@@ -4,19 +4,49 @@
   box-sizing: border-box;
   }
 
+  html {
+    font-size: 20px;
+  }
+
   body.body {
     background-image: radial-gradient(
     rgba(255, 255, 255, 0.1) 9%,
     transparent 9%
   );
-    background-color: rgb(20, 20, 20) !important;
+    background-color: rgb(34, 32, 32) !important;
     background-position: 0% 0%;
     background-size: 12vmin 12vmin;
-    color: white;
+    color: whitesmoke;
+    background-attachment: fixed;
+
+    transition: opacity 800ms ease,
+    background-size 800ms ease;
   }
 
  /* https://www.toptal.com/designers/subtlepatterns/ */
-  
+.signin {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.btn {
+
+}
+
+button.custom-btn,
+a.custom-btn {
+  margin-top: .75em;
+  border-radius: 3rem;
+}
+
+button.custom-btn:hover,
+a.custom-btn:hover {
+  background-size: 11vmin 11vmin;
+  opacity: 0.5;
+}
+
+
   
 .container {
 
