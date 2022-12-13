@@ -9,11 +9,11 @@
 
 <body class="body">
     <div class="container">
-      <div class="user-info-container">
-        <div class="title">
+      <div class="user-info-container row mt-8">
+        <div class="title col">
           <h1>What to Say...</h1>
         </div>
-        <div class="signin">
+        <div class="signin col">
           <% if session[:username]%>
             <p text-center>You are signed in as <strong><%= session[:username] %></strong></p>
             <form action="/users/signout" method="post">
@@ -22,7 +22,7 @@
           <% else %>
             <p>You are not signed in</p>
           <% end %>
-      </div>
+        </div>
       </div>
         
         <p style="font-size:20px; color:#538b01; font-weight:bold; font-style:italic;"><%= session.delete(:success) %></p>

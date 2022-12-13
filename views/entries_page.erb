@@ -10,20 +10,24 @@
 <% if @nested_array[@page_id] %>
   <% @nested_array[@page_id].each do |entry| %>
     <% entry_index = entry[:id].to_i %>
-    <p><strong>Phrase: </strong><%= entry[:phrase] %></p>
-    <p><strong>Response: </strong><%= entry[:response] %></p>
-    <hr align="left", style="width:50%", size="1", color=lightgrey>
-    <p><strong>Note Count: </strong><%= note_count(entry_index) %></p>
-    <p>Created at: <%= entry[:time][0..15] %> </p>
-    
-    <a class="btn btn-primary custom-btn" href="/entries/<%= entry_index %>/notes_page/0">Edit/View</a><br>
+    <div class="card mb-2" style="width: 18rem;">
+      <div class="card-body">
+        <p><strong>Phrase: </strong><%= entry[:phrase] %></p>
+        <p><strong>Response: </strong><%= entry[:response] %></p>
+        <hr align="left", style="width:50%", size="1", color=lightgrey>
+        <p><strong>Note Count: </strong><%= note_count(entry_index) %></p>
+        <p>Created at: <%= entry[:time][0..15] %> </p>
+        
+        <a class="btn btn-primary custom-btn" href="/entries/<%= entry_index %>/notes_page/0">Edit/View</a><br>
 
-    <form action="/entries/<%= entry_index %>/destroy" method="post">
-      <button class="btn btn-primary custom-btn" type="submit"">Delete Entry</button>
-    </form>
+        <form action="/entries/<%= entry_index %>/destroy" method="post">
+          <button class="btn btn-primary custom-btn" type="submit"">Delete Entry</button>
+        </form>
 
-    <br>
-    <hr style="width:100%", size="3", color=black>
+        <br>
+        <hr style="width:100%", size="3", color=black>
+        </div>
+      </div>
   <% end %>
 <% end %>
 
