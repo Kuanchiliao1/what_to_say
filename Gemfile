@@ -6,6 +6,7 @@ gem "sinatra-contrib"
 gem "erubis"
 gem "pry"
 gem "pg"
+gem "ruby-openai"
 
 group :production do
   gem "puma"
