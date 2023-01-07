@@ -36,7 +36,6 @@ a.custom-btn {
 
 button.custom-btn:hover {
   background-size: 11vmin 11vmin;
-  opacity: 0.5;
 }
 
 .mobile-nav-toggle {
@@ -77,6 +76,16 @@ button.custom-btn:hover {
 .btn.custom-btn {
   background-color: var(--color-primary);
   color: var(--color-dark-gray);
+  font-weight: 400;
+  border-radius: 0;
+}
+
+.btn.custom-btn:hover {
+  color: var(--color-primary);
+  background-color: var(--color-dark-gray);
+  border-color: var(--color-primary);
+  transition: all 0.2s;
+
 }
 
 .app-title {

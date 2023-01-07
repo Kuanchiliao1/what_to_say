@@ -16,11 +16,12 @@
           <p><strong>Note Count: </strong><%= note_count(entry_index) %></p>
           <p>Created at: <%= entry[:time][0..15] %> </p>
   
-          <a class="btn custom-btn" href="/entries/<%= entry_index %>/notes_page/0">Edit/View</a><br>
-  
-          <form action="/entries/<%= entry_index %>/destroy" method="post">
-            <button class="btn btn-outline-danger custom-btn" type="submit"">Delete Entry</button>
-          </form>
+          <div class="d-flex gap-3">
+            <a class="btn custom-btn" href="/entries/<%= entry_index %>/notes_page/0">Edit/View</a><br>
+            <form action="/entries/<%= entry_index %>/destroy" method="post">
+              <button class="btn custom-btn" type="submit"">Delete Entry</button>
+            </form>
+          </div>
   
           <br>
           <hr style="width:100%", size="3", color=black>
