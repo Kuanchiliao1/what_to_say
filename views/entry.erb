@@ -1,33 +1,50 @@
 <p style="font-size:20px; color:#538b01; font-weight:bold; font-style:italic;"><%= session.delete(:success) %></p>
 
-
-<p><strong>Phrase: </strong><%= @phrase %> </p>
-<p><strong>Response: </strong><%= @entry_response %> </p>
-<a href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
-<p><strong>Your Notes: </strong></p>
+  <div class="container ps-0">
+    <div class="card custom-card mb-4">
+      <div class="card-body">
+        <p><strong>Phrase: </strong><%= @phrase %> </p>
+        <p><strong>Response: </strong><%= @entry_response %> </p>
+        <div class="d-flex gap-3">
+          <a class="btn btn-primary custom-btn" href='/entries/<%= params[:id] %>/edit'>Homepage</a>
+          <a class="btn btn-primary custom-btn" href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p><strong>Your Notes: </strong></p>
   <hr style="width:100%", size="3", color=black>
 
   <% if @notes[params[:note_id].to_i] %>
     <% @notes[params[:note_id].to_i].each do |note| %>
-      <% note_index = note[:id] %>
-      <%= note[:content] %></p>
-      <p><a href='/entries/<%= params[:id] %>/notes/<%= note_index %>/edit'>Edit Note</a></p>
-          <form action="/entries/<%= params[:id] %>/notes/<%= note_index %>/destroy" method="post">
-            <button class="btn btn-primary custom-btn" type="submit">Delete Note</button>
-          </form>
-      <hr align="left", style="width:50%", size="1", color=lightgrey>
-      <p>Created at: <%= note[:time][0..15] %></p>
-      <br>
-      <hr style="width:100%", size="3", color=black>
+      <div class="container ps-0">
+        <div class="card custom-card mb-4">
+          <div class="card-body">
+            <% note_index = note[:id] %>
+            <%= note[:content] %></p>
+            <p>
+              <a class="btn btn-primary custom-btn"   href='/entries/<%= params[:id] %>/notes/  <%= note_index %>/edit'>Edit Note</a>
+            </p>
+                <form action="/entries/<%= params[:id] %>/notes/<%= note_index %>/destroy" method="post">
+                  <button class="btn btn-primary custom-btn" type="submit">Delete Note</button>
+                </form>
+            <hr align="left", style="width:50%", size="1", color=lightgrey>
+            <p>Created at: <%= note[:time][0..15] %></p>
+            <br>
+            <hr style="width:100%", size="3", color=black>
+          </div>
+        </div>
+      </div>
   <% end %>
 <% end %>
 
 <form action="/entries/<%= params[:id] %>/notes" method="post">
   <input name="note" value="<%= params[:note] %>">
-  <input type="submit" value="Add Note">
+  <input type="submit" class="btn btn-primary custom-btn" value="Add Note">
 </form>
 
 <p style="display: inline;">Pages:</p>
+
 <% note_page_count(note_count(params[:id].to_i)).times do |num|%>
   <a href="/entries/<%= params[:id] %>/notes_page/<%= num %>"><%= num + 1%></a>
 <% end %>
