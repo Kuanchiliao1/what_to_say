@@ -1,38 +1,42 @@
 <p>This your personal phrasebook for recording possible Responses to your favorite phrases! Click Add Entry to add a Phrase/Response pair, and click Edit/View to view your notes on that particular phrase or to edit the Entry. You may add as many Notes per Entry as you'd like.</p>
-<p style="display: inline;">Pages:</p>
-<% (page_count).times do |num|%>
-  <a href=<%= "/entries_page/#{num}" %>><%= num + 1%></a>
-<% end %>
-<p><a class="btn btn-primary custom-btn" href='/entries/add'>Add Entry</a></p>
+
 <h2>Your Entries on Page <%= @page_id + 1 %>:</h2>
+<a class="btn btn-primary custom-btn" href='/entries/add'>Add Entry</a>
 <hr style="width:100%", size="3", color=black>
 
-<% if @nested_array[@page_id] %>
-  <% @nested_array[@page_id].each do |entry| %>
-    <% entry_index = entry[:id].to_i %>
-    <div class="card mb-2" style="width: 18rem;">
-      <div class="card-body">
-        <p><strong>Phrase: </strong><%= entry[:phrase] %></p>
-        <p><strong>Response: </strong><%= entry[:response] %></p>
-        <hr align="left", style="width:50%", size="1", color=lightgrey>
-        <p><strong>Note Count: </strong><%= note_count(entry_index) %></p>
-        <p>Created at: <%= entry[:time][0..15] %> </p>
-        
-        <a class="btn btn-primary custom-btn" href="/entries/<%= entry_index %>/notes_page/0">Edit/View</a><br>
-
-        <form action="/entries/<%= entry_index %>/destroy" method="post">
-          <button class="btn btn-primary custom-btn" type="submit"">Delete Entry</button>
-        </form>
-
-        <br>
-        <hr style="width:100%", size="3", color=black>
+<div class="container ps-0">
+  <% if @nested_array[@page_id] %>
+    <% @nested_array[@page_id].each do |entry| %>
+      <% entry_index = entry[:id].to_i %>
+      <div class="card mb-4">
+        <div class="card-body">
+          <p><strong>Phrase: </strong><%= entry[:phrase] %></p>
+          <p><strong>Response: </strong><%= entry[:response] %></p>
+          <hr align="left", style="width:50%", size="1", color=lightgrey>
+          <p><strong>Note Count: </strong><%= note_count(entry_index) %></p>
+          <p>Created at: <%= entry[:time][0..15] %> </p>
+  
+          <a class="btn btn-primary custom-btn" href="/entries/<%= entry_index %>/notes_page/0">Edit/View</a><br>
+  
+          <form action="/entries/<%= entry_index %>/destroy" method="post">
+            <button class="btn btn-outline-danger custom-btn" type="submit"">Delete Entry</button>
+          </form>
+  
+          <br>
+          <hr style="width:100%", size="3", color=black>
+          </div>
         </div>
-      </div>
+    <% end %>
   <% end %>
-<% end %>
+</div>
 
-<p style="display: inline;">Pages:</p>
-<% (page_count).times do |num|%>
-  <a href=<%= "/entries_page/#{num}" %>><%= num + 1%></a>
-<% end %>
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+    <% (page_count).times do |num|%>
+      <li class="page-item"><a class="page-link"href=<%= "/entries_page/#{num}" %>><%= num + 1%></a></li>
+    <% end %>
+    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+  </ul>
+</nav>
 

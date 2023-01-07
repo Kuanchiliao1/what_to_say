@@ -6,11 +6,17 @@
 <% end %>
 
 <form action="/users/signin"  method="post">
-      <label for="username">Username
-        <input id="username" name="username" placeholder="" type="text" value=<%= @user %>><br>
-      </label>
-      <label for="password">Password
-        <input id="password" name="password" type="text" placeholder="" value="">
-      </label><br>
-    <input type="submit" value="Sign In">
+  <div class="d-flex flex-column">
+    <label for="username">Username</label>
+    <div class="input-group mb-3">
+      <input class="form-control" id="username" name="username" placeholder="" type="text" value=<%= @user %>>
+    </div>
+    
+    <label for="password">Password
+      <div class="input-group">
+        <input class="form-control id="password" name="password" type="text" placeholder="" value="">
+      </div>
+    </label><br>
+  </div>
+  <input class="btn btn-primary" type="submit" value="Sign In">
 </form>

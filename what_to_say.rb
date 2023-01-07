@@ -144,7 +144,7 @@ end
 get '/entries/:id/notes_page/:note_id' do |id, note_id|
   redirect_if_logged_out
 
-  if total_entries <= id.to_i || id.to_s.match?(/[\D]/) || id != id.to_i.to_s
+  if id.to_s.match?(/[\D]/) || id != id.to_i.to_s
     session[:failure] << "Invalid entry number."
     redirect '/entries_page/0'
   end
@@ -153,7 +153,6 @@ get '/entries/:id/notes_page/:note_id' do |id, note_id|
   @phrase = load_entry(id)[:phrase]
   
   @entry_response = load_entry(id)[:response]
-
   erb :entry
 end
 

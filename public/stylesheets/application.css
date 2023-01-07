@@ -29,11 +29,6 @@
   flex-direction: column;
   align-items: flex-end;
   width: 30px;
-  background-color: red;
-}
-
-.btn {
-
 }
 
 button.custom-btn,
@@ -47,15 +42,19 @@ button.custom-btn:hover {
   opacity: 0.5;
 }
 
-
-  
-.container {
-
-}
-
-.user-info-container {
-  display:flex;
-  justify-content: space-between;
+.mobile-nav-toggle {
+	display: block;
+	position: absolute;
+	z-index: 2000;
+	right: 1rem;
+	top: 2rem;
+	background: transparent;
+	background-image: url(./assets/shared/icon-hamburger.svg);
+	background-repeat: no-repeat;
+	width: 1.5rem;
+	aspect-ratio: 1;
+	border:
+	0;
 }
 
 .notecard-container {
@@ -64,5 +63,20 @@ button.custom-btn:hover {
   flex-direction: column;
 }
 
-.notecard {
+.card>.card-body {
+  background-color: hsl(227, 84%, 40%);
+}
+
+.card-grid .container {
+
+}
+
+.cards-container.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.btn.btn-primary {
+  background-color: red;
 }
