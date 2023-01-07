@@ -1,29 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   }
 
-  html {
-    font-size: 20px;
+  :root {
+    --color-white: white;
+    --color-primary: #f2bb13;
+    
   }
 
   body.body {
-    background-image: radial-gradient(
-    rgba(255, 255, 255, 0.1) 9%,
-    transparent 9%
-  );
     background-color: rgb(34, 32, 32) !important;
-    background-position: 0% 0%;
-    background-size: 12vmin 12vmin;
-    color: whitesmoke;
-    background-attachment: fixed;
-
-    transition: opacity 800ms ease,
-    background-size 800ms ease;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
   }
 
  /* https://www.toptal.com/designers/subtlepatterns/ */
+
 .signin {
   display: flex;
   flex-direction: column;
@@ -65,10 +61,6 @@ button.custom-btn:hover {
 
 .card>.card-body {
   background-color: hsl(227, 84%, 40%);
-}
-
-.card-grid .container {
-
 }
 
 .cards-container.container {
