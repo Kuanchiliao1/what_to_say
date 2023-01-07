@@ -88,6 +88,10 @@ button.custom-btn:hover {
 
 }
 
+.custom-btn.signout-btn {
+  margin-top: 0;
+}
+
 .app-title {
   text-transform: uppercase;
   font-weight: 800;
