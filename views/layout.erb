@@ -8,20 +8,21 @@
   </head>
 
 <body class="body container">
-      <div class="d-flex align-items-center justify-content-between mt-4">
-        <% if session[:username]%>
-          <p class="m-0">You are signed in as <strong><%= session[:username] %></strong></p>
-          <form action="/users/signout" method="post">
-            <button class="btn btn-primary btn-sm" type="submit">Sign out</button>
-          </form>
-        <% else %>
-          <p>You are not signed in</p>
-        <% end %>
-      </div>
+      
     <div class="container pt-3">
+      <div class="d-flex align-items-center justify-content-between my-3">
+          <% if session[:username]%>
+            <p class="m-0">You are signed in as <strong><%= session[:username] %></strong></p>
+            <form action="/users/signout" method="post">
+              <button class="btn custom-btn" type="submit">Sign out</button>
+            </form>
+          <% else %>
+            <p>You are not signed in</p>
+          <% end %>
+        </div>
       <div class="d-flex justify-between row mt-8">
         <div class="title col">
-          <h1 class="text-center bg-dark p-2">What to Say...</h1>
+          <h1 class="text-center p-2 app-title">What to Say...</h1>
         </div>
       
       </div>

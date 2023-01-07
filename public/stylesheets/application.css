@@ -6,19 +6,20 @@
   box-sizing: border-box;
   }
 
-  :root {
-    --color-white: white;
-    --color-primary: #f2bb13;
-    
-  }
+:root {
+  --color-white: white;
+  --color-text-light: whitesmoke;
+  --color-primary: #f2bb13;
+  --color-dark-gray: rgb(34, 32, 32);
+  --color-gray: #393d42;
+  --color-light-idea: #E7ECEF;
+}
 
-  body.body {
-    background-color: rgb(34, 32, 32) !important;
-    color: white;
-    font-family: 'Montserrat', sans-serif;
-  }
-
- /* https://www.toptal.com/designers/subtlepatterns/ */
+body.body {
+  background-color: var(--color-dark-gray);
+  color: var(--color-text-light);
+  font-family: 'Montserrat', sans-serif;
+}
 
 .signin {
   display: flex;
@@ -60,7 +61,11 @@ button.custom-btn:hover {
 }
 
 .card>.card-body {
-  background-color: hsl(227, 84%, 40%);
+  background-color: var(--color-gray);
+}
+
+.card.custom-card {
+  border: none;
 }
 
 .cards-container.container {
@@ -69,6 +74,14 @@ button.custom-btn:hover {
   align-items: center;
 }
 
-.btn.btn-primary {
-  background-color: red;
+.btn.custom-btn {
+  background-color: var(--color-primary);
+  color: var(--color-dark-gray);
+}
+
+.app-title {
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 2.3px;
+  font-size: 3rem;
 }
