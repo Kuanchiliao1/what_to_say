@@ -1,4 +1,5 @@
 <p style="font-size:20px; color:#538b01; font-weight:bold; font-style:italic;"><%= session.delete(:success) %></p>
+<h2>Your Entry:</h2>
 
   <div class="container ps-0">
     <div class="card custom-card mb-4">
@@ -6,8 +7,8 @@
         <p><strong>Phrase: </strong><%= @phrase %> </p>
         <p><strong>Response: </strong><%= @entry_response %> </p>
         <div class="d-flex gap-3">
-          <a class="btn btn-primary custom-btn" href="/entries_page/0">Homepage</a>
-          <a class="btn btn-primary custom-btn" href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
+          <a class="btn custom-btn" href="/entries_page/0">🏚️ Homepage</a>
+          <a class="btn custom-btn" href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
         </div>
       </div>
     </div>
@@ -24,10 +25,10 @@
             <%= note[:content] %></p>
             <div class="d-flex gap-3">
               <p>
-                <a class="btn btn-primary custom-btn"   href='/entries/<%= params[:id] %>/notes/  <%= note_index %>/edit'>Edit Note</a>
+                <a class="btn custom-btn"   href='/entries/<%= params[:id] %>/notes/  <%= note_index %>/edit'>Edit Note</a>
               </p>
               <form action="/entries/<%= params[:id] %>/notes/<%= note_index %>/destroy" method="post">
-                <button class="btn btn-primary custom-btn" type="submit">Delete Note</button>
+                <button class="btn custom-btn" type="submit">Delete Note</button>
               </form>
             </div>
             <hr align="left", style="width:50%", size="1", color=lightgrey>
@@ -42,10 +43,10 @@
 
 <form action="/entries/<%= params[:id] %>/notes" method="post">
   <input name="note" value="<%= params[:note] %>">
-  <input type="submit" class="btn btn-primary custom-btn" value="Add Note">
+  <input type="submit" class="btn custom-btn" value="Add Note">
 </form>
 
-<p style="display: inline;">Pages:</p>
+<br>
 
 <nav aria-label="Note navigation">
   <ul class="pagination">

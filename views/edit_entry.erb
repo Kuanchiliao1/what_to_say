@@ -1,24 +1,30 @@
 <h2>Edit Entry (Phrase must be unique)</h2>
 
-<form action="/entries/<%= params[:id] %>/edit" method="post">
-  <dl>
-    <dt>
-      <label for="phrase_name">--------Edit phrase name
-      </label>
-    </dt>
-    <dd>
-      <textarea name="phrase_name"><%= @phrase %>
-        </textarea>
-    </dd>
-    <label for="response_name">--------Edit response name
-      </label>
-    <dd>
-      <textarea name="response_name"><%= @entry_response %>
-      </textarea>
-    </dd>
-  </dl>
-  <fieldset>
-    <input type="submit" value="Save">
-    <a href="/entries/<%= params[:id] %>/notes_page/0">Cancel</a>
-  </fieldset>
-</form>
+<div class="card custom-card">
+  <div class="card-body">
+    <form action="/entries/<%= params[:id] %>/edit" method="post">
+      <dl>
+        <dt>
+          <label for="phrase_name">Edit phrase name
+          </label>
+        </dt>
+        <dd>
+          <textarea name="phrase_name"><%= @phrase %>
+            </textarea>
+        </dd>
+        <label for="response_name">Edit response name
+          </label>
+        <dd>
+          <textarea name="response_name"><%= @entry_response %>
+          </textarea>
+        </dd>
+      </dl>
+      <fieldset>
+        <div class="d-flex gap-3">
+          <button class="btn custom-btn" type="submit"">Save</button>
+          <a class="btn custom-btn" href="/entries/<%= params[:id] %>/notes_page/0">Cancel</a>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
