@@ -6,7 +6,7 @@
         <p><strong>Phrase: </strong><%= @phrase %> </p>
         <p><strong>Response: </strong><%= @entry_response %> </p>
         <div class="d-flex gap-3">
-          <a class="btn btn-primary custom-btn" href='/entries/<%= params[:id] %>/edit'>Homepage</a>
+          <a class="btn btn-primary custom-btn" href="/entries_page/0">Homepage</a>
           <a class="btn btn-primary custom-btn" href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
         </div>
       </div>
@@ -22,12 +22,14 @@
           <div class="card-body">
             <% note_index = note[:id] %>
             <%= note[:content] %></p>
-            <p>
-              <a class="btn btn-primary custom-btn"   href='/entries/<%= params[:id] %>/notes/  <%= note_index %>/edit'>Edit Note</a>
-            </p>
-                <form action="/entries/<%= params[:id] %>/notes/<%= note_index %>/destroy" method="post">
-                  <button class="btn btn-primary custom-btn" type="submit">Delete Note</button>
-                </form>
+            <div class="d-flex gap-3">
+              <p>
+                <a class="btn btn-primary custom-btn"   href='/entries/<%= params[:id] %>/notes/  <%= note_index %>/edit'>Edit Note</a>
+              </p>
+              <form action="/entries/<%= params[:id] %>/notes/<%= note_index %>/destroy" method="post">
+                <button class="btn btn-primary custom-btn" type="submit">Delete Note</button>
+              </form>
+            </div>
             <hr align="left", style="width:50%", size="1", color=lightgrey>
             <p>Created at: <%= note[:time][0..15] %></p>
             <br>
@@ -45,9 +47,13 @@
 
 <p style="display: inline;">Pages:</p>
 
-<% note_page_count(note_count(params[:id].to_i)).times do |num|%>
-  <a href="/entries/<%= params[:id] %>/notes_page/<%= num %>"><%= num + 1%></a>
-<% end %>
-<br>
-<a href="/entries_page/0">home</a>
-
+<nav aria-label="Note navigation">
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link" href="#">Scroll to Top</a></li>
+    <% note_page_count(note_count(params[:id].to_i)).times do |num|%>
+      <li class="page-item">
+        <a class="page-link" href="/entries/<%= params[:id] %>/notes_page/<%= num %>"><%= num + 1%></a>
+      </li>
+    <% end %>
+  </ul>
+</nav>

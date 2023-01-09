@@ -5,6 +5,30 @@
   <% session.delete(:failure) %>
 <% end %>
 
+<div class="card custom-card mb-4">
+  <div class="card-body">
+    <form action="/entries/add"  method="post">
+      <dl>
+
+        <label for="entry">Submit your own entry (Note: phrase MUST be unique)</label><br><br>
+        <label for="phrase">Phrase
+          <input id="phrase" name="new_phrase" placeholder="" type="text" value="<%= params[:new_phrase] %>"><br>
+        </label><br>
+        <label for="response">Response
+          <input id="response" name="new_response" type="text" value="<%= params[:new_response] %>">
+        </label><br>
+      </dl>
+      <fieldset class="actions">
+        <input type="submit" value="Add">
+      </fieldset>
+    </form>
+    <div class="d-flex gap-3">
+      <a class="btn btn-primary custom-btn" href="/entries_page/0">Homepage</a>
+      <a class="btn btn-primary custom-btn" href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
+    </div>
+  </div>
+</div>
+
 <form action="/entries/add"  method="post">
   <dl>
     <dt>
