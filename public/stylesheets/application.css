@@ -15,6 +15,10 @@
   --color-light-idea: #E7ECEF;
 }
 
+.color-primary {
+  color: var(--color-primary);
+}
+
 body.body {
   background-color: var(--color-dark-gray);
   color: var(--color-text-light);
@@ -85,7 +89,6 @@ button.custom-btn:hover {
   background-color: var(--color-dark-gray);
   border-color: var(--color-primary);
   transition: all 0.2s;
-
 }
 
 .custom-btn.signout-btn {
