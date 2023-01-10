@@ -262,7 +262,7 @@ post '/users/signin' do
   pass = params[:password]
 
   if @user == "admin" && pass == "password"
-    session[:success] = "Welcome!"
+    session[:success] = "Welcome!, #{@user}"
     session[:username] = @user
     redirect session[:target_path]
   else
