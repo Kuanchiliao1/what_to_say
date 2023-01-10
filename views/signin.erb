@@ -1,15 +1,19 @@
-<form action="/users/signin"  method="post" class="signin-form">
-  <div class="d-flex flex-column">
-    <label for="username">Username (admin)</label>
-    <div class="input-group mb-3">
-      <input class="form-control" id="username" name="username" placeholder="" type="text" value=<%= @user %>>
-    </div>
-    
-    <label for="password">Password (password)
-      <div class="input-group">
-        <input class="form-control" id="password" name="password" type="text" placeholder="" value="">
+<div class="card custom-card mb-4">
+  <div class="card-body">
+    <form action="/users/signin"  method="post" class="signin-form">
+      <div class="d-flex flex-column">
+        <label for="username">Username (admin)</label>
+        <div class="input-group mb-3">
+          <input class="form-control" id="username" name="username" placeholder="" type="text" value=<%= @user %>>
+        </div>
+        
+        <label for="password">Password (password)
+          <div class="input-group">
+            <input class="form-control" id="password" name="password" type="text" placeholder="" value="">
+          </div>
+        </label><br>
       </div>
-    </label><br>
+      <input class="btn custom-btn" type="submit" value="Sign In">
+    </form>
   </div>
-  <input class="btn custom-btn" type="submit" value="Sign In">
-</form>
+</div>
