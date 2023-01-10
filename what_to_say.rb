@@ -1,6 +1,7 @@
 require "sinatra"
 require "sinatra/reloader" if development?
 require "tilt/erubis"
+require 'sinatra/autosass'
 
 # This allows use to "store" html blocks access within views via yield keyword
 require "sinatra/content_for"
@@ -12,6 +13,14 @@ configure do
   set :session_secret, '\x12\x9A\x81*U\xCFT\x91\xB7;\xAF\xF2I]\x9C@L\xD5\xB8;\x00\x87\xF3\x82yS(r\x90\xC8\x86\xBB\x13\x92\xA83$O'
   set :erb, escape_html: true
   also_reload "database_persistance.rb" if development?
+  set :options, 
+              {
+                :css_location => 'public/css',
+                :template_location => 'public/sass',
+                :syntax => :scss,
+                :cache => true,
+                :cache_location => '.tmp/sass-cache'
+              }
 end
 
 before do
