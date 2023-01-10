@@ -1,4 +1,4 @@
-*[Live site]*(https://what-to-say.herokuapp.com/)
+*[Live site](https://what-to-say.herokuapp.com/)*
 
 # What to Say 💭
 Welcome to your personalized language learning phrasebook! With this tool, you can easily record and keep track of your responses to common phrases. Simply click on "Add Entry" to add a phrase and response pair, and use "Edit/View" to review and edit your notes. You can add as many notes as you'd like to each entry, making this an ideal resource for improving your language skills. Start building your phrasebook today and take your language learning to the next level!
