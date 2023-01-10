@@ -1,7 +1,7 @@
 <div class="container ps-0">
   <div class="card custom-card mb-4">
     <div class="card-body">
-      <p>Welcome to your personalized language learning phrasebook! With this tool, you can easily record and keep track of your responses to common phrases. Simply click on "Add Entry" to add a phrase and response pair, and use "Edit/View" to review and edit your notes. You can add as many notes as you'd like to each entry, making this an ideal resource for improving your language skills. Start building your phrasebook today and take your language learning to the next level!</p>
+      <p>Welcome to your <b>personalized language learning phrasebook</b>! With this tool, you can easily record and keep track of your <b>responses</b> to common <b>phrases</b>. Simply click on <b>"Add Entry"</b> to add a <b>Phrase and Response pair</b>, and use "Edit/View" to review and edit your <b>notes</b>. You can add as many <b>notes</b> as you'd like to each <b>Entry</b>, making this an ideal resource for improving your language skills. Start building your phrasebook today and take your language learning to the next level!</p>
     </div>
   </div>
 </div>
@@ -39,11 +39,10 @@
 
 <nav aria-label="Page navigation">
   <ul class="pagination">
-    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
     <% (page_count).times do |num|%>
-      <li class="page-item"><a class="page-link"href=<%= "/entries_page/#{num}" %>><%= num + 1%></a></li>
+      <li class="page-item"><a class="btn custom-btn" href=<%= "/entries_page/#{num}" %>><%= num + 1%></a></li>
     <% end %>
-    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+    <li class="page-item"><a class="btn custom-btn" href="#">Scroll to Top</a></li>
   </ul>
 </nav>
 
