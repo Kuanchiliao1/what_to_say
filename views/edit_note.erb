@@ -1,18 +1,24 @@
-<h2>Editing a Note</h2>
+<h2>Edit Note</h2>
 
-<form action="/entries/<%= params[:entry_id] %>/notes/<%= params[:note_id] %>/edit" method="post">
-  <dl>
-    <dt>
-      <label for="note">--------Edit note
-      </label>
-    </dt>
-    <dd>
-      <textarea rows="4" cols="50" name="note"><%= @note %>
-        </textarea>
-    </dd>
-  </dl>
-  <fieldset>
-    <input type="submit" value="Save">
-    <a href="/entries/<%= params[:entry_id] %>/notes_page/0">Cancel</a>
-  </fieldset>
-</form>
+<div class="card custom-card">
+  <div class="card-body">
+    <form action="/entries/<%= params[:entry_id] %>/notes/<%= params[:note_id] %>/edit" method="post">
+      <dl>
+        <dt>
+          <label for="note">Edit note
+          </label>
+        </dt>
+        <dd>
+          <textarea style="max-width:100%;" rows="4" cols="50" name="note"><%= @note %>
+            </textarea>
+        </dd>
+      </dl>
+      <fieldset>
+        <div class="d-flex gap-3">
+          <button class="btn custom-btn" type="submit">Save</button>
+          <a class="btn custom-btn" href="/entries/<%= params[:entry_id] %>/notes_page/0">Cancel</a>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>

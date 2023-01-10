@@ -6,6 +6,7 @@
         <p><strong>Response: </strong><%= @entry_response %> </p>
         <div class="d-flex gap-3">
           <a class="btn custom-btn" href="/entries_page/0">🏚️ Homepage</a>
+          <br>
           <a class="btn custom-btn" href='/entries/<%= params[:id] %>/edit'>Edit Entry</a>
         </div>
       </div>
@@ -21,17 +22,16 @@
           <div class="card-body">
             <% note_index = note[:id] %>
             <%= note[:content] %></p>
+            
+            <hr align="left", style="width:50%", size="1", color=lightgrey>
+            <p>Created at: <%= note[:time][0..15] %></p>
             <div class="d-flex gap-3">
-              <p>
-                <a class="btn custom-btn"   href='/entries/<%= params[:id] %>/notes/  <%= note_index %>/edit'>Edit Note</a>
-              </p>
+              <a class="btn custom-btn"   href='/entries/<%= params[:id] %>/notes/  <%= note_index %>/edit'>Edit Note</a>
+              <br>
               <form action="/entries/<%= params[:id] %>/notes/<%= note_index %>/destroy" method="post">
                 <button class="btn custom-btn" type="submit">Delete Note</button>
               </form>
             </div>
-            <hr align="left", style="width:50%", size="1", color=lightgrey>
-            <p>Created at: <%= note[:time][0..15] %></p>
-            <br>
             <hr style="width:100%", size="3", color=black>
           </div>
         </div>
@@ -39,20 +39,29 @@
   <% end %>
 <% end %>
 
-<form action="/entries/<%= params[:id] %>/notes" method="post">
-  <input name="note" value="<%= params[:note] %>">
-  <input type="submit" class="btn custom-btn" value="Add Note">
-</form>
+<div class="container ps-0">
+  <div class="card custom-card mb-4">
+    <div class="card-body">
+      <form action="/entries/<%= params[:id] %>/notes" method="post">
+        <div class="d-flex gap-3">
+          <input type="submit" class="btn custom-btn" value="Add Note">
+          <input style="width: 100%;" name="note" value="<%= params[:note] %>">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <br>
 
 <nav aria-label="Note navigation">
   <ul class="pagination">
-    <li class="page-item"><a class="page-link" href="#">Scroll to Top</a></li>
+    <li class="page-item"><a class="btn custom-btn" href="/">🏠 Homepage</a></li>
     <% note_page_count(note_count(params[:id].to_i)).times do |num|%>
       <li class="page-item">
-        <a class="page-link" href="/entries/<%= params[:id] %>/notes_page/<%= num %>"><%= num + 1%></a>
+        <a class="btn custom-btn" href="/entries/<%= params[:id] %>/notes_page/<%= num %>"><%= num + 1%></a>
       </li>
     <% end %>
+    <li class="page-item"><a class="btn custom-btn" href="#">Scroll to Top</a></li>
   </ul>
 </nav>
