@@ -24,6 +24,7 @@ configure do
 end
 
 before do
+  headers 'Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Methods' => ['GET']
   @storage = DatabasePersistance.new(logger)
   session[:failure] ||= []
 end
